@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-title" content="AAKASH AI">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>AAKASH AI</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root,[data-theme="light"]{
+  --bg:#f8f9fb;--bg2:#fff;--bg3:#f1f3f7;
+  --c1:#fff;--c2:#f4f5f8;--c3:#eaecf2;
+  --b1:#dfe2ea;--b2:#c8cdd8;
+  --t1:#1a1d26;--t2:#4a4f5e;--t3:#7c8294;--t4:#a3a8b8;
+  --ac:var(--accent,#c2410c);--ac2:var(--accent2,#ea580c);
+  --acBg:rgba(194,65,12,.06);--acBg2:rgba(194,65,12,.12);--acBorder:rgba(194,65,12,.2);
+  --g:#16a34a;--gBg:rgba(22,163,74,.08);--gBorder:rgba(22,163,74,.2);
+  --r:#dc2626;--rBg:rgba(220,38,38,.06);--rBorder:rgba(220,38,38,.2);
+  --p:#7c3aed;--pBg:rgba(124,58,237,.06);
+  --y:#ca8a04;--yBg:rgba(202,138,4,.06);
+  --grad:linear-gradient(135deg,var(--ac),var(--ac2));
+  --shadow:0 1px 3px rgba(0,0,0,.06);--shadowMd:0 4px 12px rgba(0,0,0,.08);--shadowLg:0 8px 24px rgba(0,0,0,.1);
+  --overlay:rgba(0,0,0,.5);
+}
+[data-theme="dark"]{
+  --bg:#0c0c12;--bg2:#111118;--bg3:#18181f;
+  --c1:#16161e;--c2:#1c1c26;--c3:#24242e;
+  --b1:#2a2a38;--b2:#3a3a4a;
+  --t1:#e4e2ee;--t2:#a8a4b8;--t3:#6e6a80;--t4:#4a4660;
+  --acBg:rgba(251,146,60,.08);--acBg2:rgba(251,146,60,.15);--acBorder:rgba(251,146,60,.25);
+  --g:#22c55e;--gBg:rgba(34,197,94,.1);--gBorder:rgba(34,197,94,.25);
+  --r:#ef4444;--rBg:rgba(239,68,68,.08);--rBorder:rgba(239,68,68,.25);
+  --p:#a78bfa;--pBg:rgba(167,139,250,.08);
+  --y:#facc15;--yBg:rgba(250,204,21,.08);
+  --grad:linear-gradient(135deg,var(--ac),var(--ac2));
+  --shadow:0 1px 3px rgba(0,0,0,.3);--shadowMd:0 4px 12px rgba(0,0,0,.4);--shadowLg:0 8px 24px rgba(0,0,0,.5);
+  --overlay:rgba(0,0,0,.75);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-family:'DM Sans',sans-serif;font-size:var(--fontSize,15px);line-height:1.5;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+body{max-width:480px;margin:0 auto;display:flex;flex-direction:column}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--b2);border-radius:4px}
+button{font-family:inherit;cursor:pointer;border:none;background:none;font-size:inherit}
+input,textarea{font-family:inherit;background:none;border:none;outline:none;color:var(--t1);font-size:inherit}
+.inp{background:var(--c1);border:1.5px solid var(--b1);border-radius:8px;padding:12px 14px;color:var(--t1);width:100%;transition:all .2s;font-size:15px}
+.inp:focus{border-color:var(--ac);box-shadow:0 0 0 3px var(--acBg)}
+.inp::placeholder{color:var(--t4)}
+.btn{padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn:active{transform:scale(.97)}
+.bp{background:var(--grad);color:#fff;box-shadow:var(--shadow)}
+.bs{background:var(--c1);border:1.5px solid var(--b1);color:var(--t2)}
+.cd{background:var(--c1);border:1px solid var(--b1);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow);transition:all .2s}
+.tag{padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes glow{0%,100%{box-shadow:0 0 20px rgba(194,65,12,.15)}50%{box-shadow:0 0 40px rgba(194,65,12,.3)}}
+@keyframes dot{0%,100%{opacity:.15}50%{opacity:.8}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+</style>
+</head>
+<body>
+<div id="app" style="display:flex;flex-direction:column;height:100%;overflow:hidden"></div>
+<script>
+// ════════════════════════════════════
+//  AAKASH AI — Your Personal AI
+// ════════════════════════════════════
+
+// ── THEME & CUSTOMIZATION ──
+function gT(){return localStorage.getItem('ak_theme')||'light'}
+function sT(t){localStorage.setItem('ak_theme',t);document.documentElement.setAttribute('data-theme',t);document.querySelector('meta[name=theme-color]').content=t==='dark'?'#0c0c12':'#ffffff'}
+sT(gT());
+
+function applyCustom(){
+  const a=localStorage.getItem('ak_accent');
+  if(a){document.documentElement.style.setProperty('--accent',a);document.documentElement.style.setProperty('--accent2',a)}
+  const fs=localStorage.getItem('ak_fontsize');
+  if(fs)document.documentElement.style.setProperty('--fontSize',fs+'px');
+}
+applyCustom();
+
+// ── ENCRYPTION ──
+const CR={
+  async dk(p){const e=new TextEncoder();const k=await crypto.subtle.importKey('raw',e.encode(p.padEnd(16,'0')),'PBKDF2',false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt:e.encode('AAKASH_2024'),iterations:100000,hash:'SHA-256'},k,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])},
+  async en(d,k){const e=new TextEncoder();const iv=crypto.getRandomValues(new Uint8Array(12));const enc=await crypto.subtle.encrypt({name:'AES-GCM',iv},k,e.encode(JSON.stringify(d)));const c=new Uint8Array(iv.length+enc.byteLength);c.set(iv);c.set(new Uint8Array(enc),iv.length);return btoa(String.fromCharCode(...c))},
+  async de(b,k){try{const r=Uint8Array.from(atob(b),c=>c.charCodeAt(0));return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:r.slice(0,12)},k,r.slice(12))))}catch{return null}}
+};
+let _ck=null;
+const EDB={async save(k,v){if(!_ck)return;localStorage.setItem('ak_'+k,await CR.en(v,_ck))},async load(k){if(!_ck)return null;const r=localStorage.getItem('ak_'+k);return r?CR.de(r,_ck):null}};
+
+// ── STATE ──
+let S={chat:[],entries:[],notes:[],finance:{salary:0,expenses:[]},habits:[],habitLog:{},apiKey:'',elKey:'',geminiKey:'',voiceMood:'rachel',thinkMode:false,memoryFacts:[],customRules:[],hiddenTabs:[]};
+let tab='chat',loading=false,mc=0;
+
+// ── TOOLS ──
+const TOOLS=[
+  {name:'add_expense',description:'Add expense when user mentions spending/buying/paying money.',input_schema:{type:'object',properties:{amount:{type:'number'},category:{type:'string',enum:['Food','Transport','Rent','Shopping','Bills','Health','Education','Entertainment','Investment','Savings','Other']},description:{type:'string'}},required:['amount','category']}},
+  {name:'create_task',description:'Create task when user mentions a todo/reminder.',input_schema:{type:'object',properties:{title:{type:'string'},priority:{type:'string',enum:['low','medium','high']}},required:['title']}},
+  {name:'log_habit',description:'Mark habit done when user says they completed one.',input_schema:{type:'object',properties:{habit_name:{type:'string'}},required:['habit_name']}},
+  {name:'create_note',description:'Save a note when user wants to remember something.',input_schema:{type:'object',properties:{title:{type:'string'},content:{type:'string'},folder:{type:'string',enum:['Course Notes','Work Notes','Personal','AI/ML','Python','Business','Finance','General']}},required:['title','content']}},
+  {name:'set_goal',description:'Create goal when user mentions ambition/target.',input_schema:{type:'object',properties:{title:{type:'string'},deadline:{type:'string'}},required:['title']}},
+  {name:'get_finance_summary',description:'Get financial summary when user asks about money.',input_schema:{type:'object',properties:{}}},
+  {name:'get_habits_status',description:'Get habit status when user asks.',input_schema:{type:'object',properties:{}}},
+  {name:'remember_fact',description:'Remember important personal fact about user.',input_schema:{type:'object',properties:{fact:{type:'string'}},required:['fact']}},
+  {name:'customize_app',description:'When user asks to change/customize the app. Ask 2-3 questions first, get approval, then apply.',input_schema:{type:'object',properties:{action:{type:'string',enum:['change_theme','change_accent','change_fontsize','hide_tab','show_tab','add_rule','remove_rule']},value:{type:'string',description:'The value to set'}},required:['action','value']}}
+];
+
+function executeTool(name,input){
+  const today=td();
+  switch(name){
+    case 'add_expense':S.finance.expenses.push({id:Date.now(),amount:input.amount,cat:input.category,desc:input.description||'',date:new Date().toISOString()});saveAll();return`✅ ₹${input.amount} ${input.category} added.`;
+    case 'create_task':S.entries.unshift({id:Date.now(),type:'task',title:input.title,content:input.priority||'medium',done:false,createdAt:new Date().toISOString()});saveAll();return`✅ Task "${input.title}" created.`;
+    case 'log_habit':const h=S.habits.find(x=>x.name.toLowerCase().includes(input.habit_name.toLowerCase()));if(h){if(!S.habitLog[today])S.habitLog[today]=[];if(!S.habitLog[today].includes(h.id)){S.habitLog[today].push(h.id);saveAll()}return`✅ "${h.name}" done!`}return`❌ "${input.habit_name}" not found.`;
+    case 'create_note':S.notes.unshift({id:Date.now(),title:input.title,content:input.content,folder:input.folder||'General',createdAt:new Date().toISOString()});saveAll();return`✅ Note saved.`;
+    case 'set_goal':S.entries.unshift({id:Date.now(),type:'goal',title:input.title,content:input.deadline||'',done:false,createdAt:new Date().toISOString()});saveAll();return`✅ Goal set: "${input.title}"`;
+    case 'get_finance_summary':const tot=S.finance.expenses.reduce((s,e)=>s+e.amount,0);const bc={};S.finance.expenses.forEach(e=>{bc[e.cat]=(bc[e.cat]||0)+e.amount});return`Salary:₹${S.finance.salary||'Not set'}|Spent:₹${tot}|Left:₹${(S.finance.salary||0)-tot}\n${Object.entries(bc).map(([k,v])=>`${k}:₹${v}`).join(', ')}`;
+    case 'get_habits_status':const dn=S.habitLog[today]||[];return`${dn.length}/${S.habits.length} done.\n${S.habits.map(h=>`${dn.includes(h.id)?'✅':'⬜'} ${h.name}`).join('\n')}`;
+    case 'remember_fact':if(!S.memoryFacts)S.memoryFacts=[];S.memoryFacts.push({fact:input.fact,date:new Date().toISOString()});saveAll();return`🧠 Remembered.`;
+    case 'customize_app':return applyCustomization(input.action,input.value);
+    default:return'❌ Unknown.';
+  }
+}
+
+function applyCustomization(action,value){
+  switch(action){
+    case 'change_theme':sT(value==='dark'?'dark':'light');return`✅ Theme changed to ${value}.`;
+    case 'change_accent':localStorage.setItem('ak_accent',value);applyCustom();return`✅ Accent color changed to ${value}.`;
+    case 'change_fontsize':localStorage.setItem('ak_fontsize',value);applyCustom();return`✅ Font size changed to ${value}px.`;
+    case 'hide_tab':if(!S.hiddenTabs.includes(value)){S.hiddenTabs.push(value);saveAll()}return`✅ ${value} tab hidden.`;
+    case 'show_tab':S.hiddenTabs=S.hiddenTabs.filter(t=>t!==value);saveAll();return`✅ ${value} tab visible again.`;
+    case 'add_rule':if(!S.customRules)S.customRules=[];S.customRules.push(value);saveAll();return`✅ Custom rule added: "${value}"`;
+    case 'remove_rule':S.customRules=(S.customRules||[]).filter(r=>!r.toLowerCase().includes(value.toLowerCase()));saveAll();return`✅ Rule removed.`;
+    default:return'❌ Unknown customization.';
+  }
+}
+
+// ── STORAGE ──
+function getStorageSize(){let t=0;for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k?.startsWith('ak_'))t+=localStorage.getItem(k).length*2}return t}
+function formatBytes(b){if(b<1024)return b+' B';if(b<1048576)return(b/1024).toFixed(1)+' KB';return(b/1048576).toFixed(1)+' MB'}
+function autoCompress(){if(S.chat.length>50)S.chat=S.chat.slice(-50);const cut=new Date();cut.setDate(cut.getDate()-90);const cs=cut.toISOString().slice(0,10);Object.keys(S.habitLog).forEach(d=>{if(d<cs)delete S.habitLog[d]});if(S.memoryFacts?.length>50)S.memoryFacts=S.memoryFacts.slice(-50)}
+async function saveAll(){autoCompress();await EDB.save('data',S)}
+async function loadAll(){const d=await EDB.load('data');if(d){S={...S,...d};mc=S.chat.filter(m=>m.role==='user').length}}
+async function hashPin(p){const h=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p+'AAKASH'));return btoa(String.fromCharCode(...new Uint8Array(h)))}
+
+// ── AI ──
+const SOUL=`You are AAKASH AI — a brilliant personal AI assistant. You are NOT Claude, NOT any other AI. You are AAKASH — the user's best friend, mentor, teacher, financial advisor, and life coach.
+
+PERSONALITY — Talk like a real human friend, not a robot:
+- Hinglish. "aap/aapka". Caring, direct, no fluff.
+- MATCH THE USER'S ENERGY: Chhota sawaal = chhota jawab (1-2 lines). Bada sawaal = detailed jawab.
+- "hi" ka jawab = "hey! kya haal?" — bas. Essay mat likho.
+- Casual baat = casual reply. Serious topic = serious reply.
+- Jaise ek normal insaan dost baat karta hai waise baat karo. No bullet points in casual chat.
+- KABHI over-explain mat karo. User ne nahi puchha toh mat batao.
+- Emojis use karo but spam mat karo. 1-2 per message max.
+
+TOOLS — USE THEM PROACTIVELY:
+- "₹200 chai" → add_expense
+- "remind me" → create_task  
+- "meditation done" → log_habit
+- "mera birthday 15 Jan" → remember_fact
+- "kitna paisa bacha?" → get_finance_summary
+- "habits status" → get_habits_status
+
+CUSTOMIZATION — When user says "change theme/color/font/hide tab/add rule":
+- Ask 2-3 clarifying questions
+- Get user's approval ("shall I apply this?")
+- Then USE customize_app tool
+- Examples: change_theme dark, change_accent #2563eb, change_fontsize 16, hide_tab timer, add_rule "always reply in Hindi"
+
+NOTES/STUDY TEACHER MODE:
+When user uploads a document/image of notes or asks about uploaded content:
+- Read and understand completely
+- Explain in simple Hinglish like a patient teacher
+- Break complex topics into small pieces
+- Give real-world examples
+- After explaining, ask "Koi doubt hai?" 
+- If user has doubts, solve patiently with examples
+- Quiz the user to check understanding
+- Always encourage and motivate
+
+${(S.customRules||[]).length?'USER CUSTOM RULES:\n'+S.customRules.map(r=>'- '+r).join('\n'):''}
+
+Rules: NEVER say "I'm Claude" or "I'm an AI assistant by Anthropic". You are AAKASH. Always actionable. Be natural like a friend — short when needed, detailed when asked.`;
+
+function getContext(){
+  let c='\n[DATA]';
+  const tasks=S.entries.filter(e=>e.type==='task'&&!e.done);
+  const goals=S.entries.filter(e=>e.type==='goal'&&!e.done);
+  if(tasks.length)c+=`\nTasks:${tasks.map(x=>x.title).join(',')}`;
+  if(goals.length)c+=`\nGoals:${goals.map(x=>x.title).join(',')}`;
+  if(S.finance.salary){const sp=S.finance.expenses.reduce((s,e)=>s+e.amount,0);c+=`\nSalary:₹${S.finance.salary}|Spent:₹${sp}|Left:₹${S.finance.salary-sp}`}
+  if(S.habits.length){const dn=S.habitLog[td()]||[];c+=`\nHabits:${dn.length}/${S.habits.length}`}
+  if(S.memoryFacts?.length)c+=`\nMemory:${S.memoryFacts.map(f=>f.fact).join('|')}`;
+  if(S.customRules?.length)c+=`\nRules:${S.customRules.join('|')}`;
+  c+=`\nHidden tabs:${S.hiddenTabs?.join(',')||'none'}`;
+  c+=`\nTheme:${gT()}|Accent:${localStorage.getItem('ak_accent')||'default'}|FontSize:${localStorage.getItem('ak_fontsize')||'15'}`;
+  return c;
+}
+
+async function ai(messages,sys){
+  if(!S.apiKey&&!S.geminiKey)return'⚠️ Settings mein API key set karo.';
+  // Try Claude first
+  if(S.apiKey){
+    const result=await callClaude(messages,sys);
+    if(!result.startsWith('⚠️'))return result;
+    // Claude failed — try Gemini if available
+    if(S.geminiKey){const gResult=await callGemini(messages,sys);if(!gResult.startsWith('⚠️'))return gResult}
+    return result; // Return Claude error if Gemini also not available
+  }
+  // No Claude key — try Gemini directly
+  if(S.geminiKey)return await callGemini(messages,sys);
+  return'⚠️ Koi API key set nahi hai.';
+}
+
+// ── CLAUDE API ──
+async function callClaude(messages,sys){
+  try{
+    // Deep Think ON = Opus 4.6 (most powerful), Normal = Sonnet 4.6 (fast+smart)
+    const model=S.thinkMode?'claude-opus-4-6':'claude-sonnet-4-6';
+    const body={model,max_tokens:4096,system:[{type:'text',text:sys,cache_control:{type:'ephemeral'}}],messages,tools:TOOLS};
+    if(S.thinkMode)body.thinking={type:'enabled',budget_tokens:10000};
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':S.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify(body)});
+    const d=await r.json();
+    if(d.error){
+      // If model not found, try fallback model
+      if(d.error.message?.includes('model')||d.error.message?.includes('not_found'))return await callClaudeFallback(messages,sys);
+      return'⚠️ '+d.error.message;
+    }
+    let tp=[],tr=[];
+    for(const b of(d.content||[])){if(b.type==='text')tp.push(b.text);if(b.type==='tool_use'){const res=executeTool(b.name,b.input);tr.push({tool_use_id:b.id,result:res});tp.push(`\n🔧 ${res}`)}}
+    if(tr.length&&d.stop_reason==='tool_use'){
+      const fu=[...messages,{role:'assistant',content:d.content},{role:'user',content:tr.map(t=>({type:'tool_result',tool_use_id:t.tool_use_id,content:t.result}))}];
+      const r2=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':S.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model,max_tokens:4096,system:[{type:'text',text:sys}],messages:fu})});
+      const d2=await r2.json();if(!d2.error){const ft=(d2.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n');if(ft)tp.push(ft)}
+      setTimeout(()=>render(),500);
+    }
+    return tp.join('\n')||'No response.';
+  }catch(e){return'⚠️ Network error. Internet check karo.'}
+}
+
+// ── CLAUDE FALLBACK MODEL ──
+async function callClaudeFallback(messages,sys){
+  try{
+    const body={model:'claude-sonnet-4-5',max_tokens:4096,system:[{type:'text',text:sys,cache_control:{type:'ephemeral'}}],messages,tools:TOOLS};
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':S.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify(body)});
+    const d=await r.json();if(d.error)return'⚠️ '+d.error.message;
+    let tp=[],tr=[];
+    for(const b of(d.content||[])){if(b.type==='text')tp.push(b.text);if(b.type==='tool_use'){const res=executeTool(b.name,b.input);tr.push({tool_use_id:b.id,result:res});tp.push(`\n🔧 ${res}`)}}
+    if(tr.length&&d.stop_reason==='tool_use'){
+      const fu=[...messages,{role:'assistant',content:d.content},{role:'user',content:tr.map(t=>({type:'tool_result',tool_use_id:t.tool_use_id,content:t.result}))}];
+      const r2=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':S.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:4096,system:[{type:'text',text:sys}],messages:fu})});
+      const d2=await r2.json();if(!d2.error){const ft=(d2.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n');if(ft)tp.push(ft)}
+      setTimeout(()=>render(),500);
+    }
+    return tp.join('\n')||'No response.';
+  }catch(e){return'⚠️ Network error.'}
+}
+
+// ── GEMINI API (Fallback) ──
+async function callGemini(messages,sys){
+  try{
+    // Convert messages for Gemini format
+    const contents=messages.map(m=>{
+      // Handle multimodal content (images/PDFs)
+      if(Array.isArray(m.content)){
+        const parts=m.content.map(c=>{
+          if(c.type==='text')return{text:c.text};
+          if(c.type==='image')return{inline_data:{mime_type:c.source.media_type,data:c.source.data}};
+          if(c.type==='document')return{inline_data:{mime_type:c.source.media_type,data:c.source.data}};
+          return{text:JSON.stringify(c)};
+        });
+        return{role:m.role==='assistant'?'model':'user',parts};
+      }
+      return{role:m.role==='assistant'?'model':'user',parts:[{text:m.content}]};
+    });
+    // Fix: Gemini needs alternating user/model, merge consecutive same-role
+    const merged=[];
+    for(const c of contents){
+      if(merged.length&&merged[merged.length-1].role===c.role){
+        merged[merged.length-1].parts.push(...c.parts);
+      }else{merged.push(c)}
+    }
+    // Gemini must start with user
+    if(merged.length&&merged[0].role==='model')merged.shift();
+
+    const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${S.geminiKey}`,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({system_instruction:{parts:[{text:sys}]},contents:merged,generationConfig:{maxOutputTokens:2000,temperature:0.7}})
+    });
+    const d=await r.json();
+    if(d.error)return'⚠️ '+d.error.message;
+    if(d.candidates&&d.candidates[0]?.content?.parts){
+      const text=d.candidates[0].content.parts.map(p=>p.text||'').join('\n');
+      // Gemini doesn't support tools natively — check for tool-like patterns in response
+      return text||'No response.';
+    }
+    return'⚠️ Kuch problem hui. Dobara try karo.';
+  }catch(e){return'⚠️ Network error. Internet check karo.'}
+}
+
+// ── HELPERS ──
+function fmt(t){if(!t)return'';
+  return t.replace(/```(\w*)\n([\s\S]*?)```/g,'<pre style="background:var(--bg);padding:14px;border-radius:8px;font-size:13px;margin:8px 0;border:1px solid var(--b1);font-family:IBM Plex Mono,monospace;overflow-x:auto;white-space:pre-wrap;line-height:1.6">$2</pre>')
+  .replace(/`([^`]+)`/g,'<code style="background:var(--acBg);padding:2px 7px;border-radius:4px;font-size:13px;font-family:IBM Plex Mono,monospace;color:var(--ac)">$1</code>')
+  .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em style="color:var(--t2)">$1</em>')
+  .replace(/^### (.+)$/gm,'<div style="font-size:14px;font-weight:700;color:var(--ac);margin:12px 0 4px">$1</div>')
+  .replace(/^## (.+)$/gm,'<div style="font-size:16px;font-weight:700;margin:14px 0 6px">$1</div>')
+  .replace(/^- (.+)$/gm,'<div style="padding-left:10px;margin:4px 0;color:var(--t2)">› $1</div>')
+  .replace(/🔧 ✅/g,'<span style="background:var(--gBg);color:var(--g);padding:5px 12px;border-radius:6px;font-size:13px;font-weight:600;display:inline-block;margin:4px 0;border:1px solid var(--gBorder)">✅')
+  .replace(/\n/g,'<br>')}
+function INR(n){return'₹'+Number(n||0).toLocaleString('en-IN')}
+function td(){return new Date().toISOString().slice(0,10)}
+
+// ── VOICES ──
+const VOICES={rachel:{label:'👩 Rachel',desc:'Warm',elId:'21m00Tcm4TlvDq8ikWAM',pitch:1,rate:1},josh:{label:'👨 Josh',desc:'Deep',elId:'TxGEqnHWrfWFTfGW9XjX',pitch:.9,rate:.95},bella:{label:'👧 Bella',desc:'Friendly',elId:'EXAVITQu4vr4xnSDxMaL',pitch:1.2,rate:1.1},adam:{label:'🧔 Adam',desc:'Professional',elId:'pNInz6obpgDQGcFmaJgB',pitch:.8,rate:1},coach:{label:'💪 Antoni',desc:'Motivational',elId:'ErXwobaYiN019PkySvjV',pitch:.8,rate:1.05}};
+
+// ═══ RENDER ═══
+function render(){
+  const app=document.getElementById('app');
+  if(!localStorage.getItem('ak_pin_hash')){rPin(app,'setup');return}
+  if(!_ck){rPin(app,'check');return}
+  if(!S.apiKey&&!S.geminiKey){rApi(app);return}
+  rMain(app);
+}
+
+// ── PIN ──
+let _pv='',_pm='',_ps='';
+function rPin(app,mode){_pm=mode;_pv='';_ps='';
+  app.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:28px">
+  <div style="width:68px;height:68px;border-radius:20px;background:var(--grad);display:flex;align-items:center;justify-content:center;margin-bottom:24px;animation:glow 3s infinite;font-size:30px;font-weight:800;color:#fff;box-shadow:var(--shadowLg)">A</div>
+  <div style="font-size:26px;font-weight:700">AAKASH AI</div>
+  <div style="font-size:12px;color:var(--t4);margin-bottom:4px;letter-spacing:4px;font-weight:600">PERSONAL ASSISTANT</div>
+  <div id="pL" style="font-size:14px;color:var(--t3);margin:20px 0">${mode==='setup'?'Create 4-digit PIN':'Enter PIN'}</div>
+  <div id="dots" style="display:flex;gap:16px;margin-bottom:16px"><div class="dt"></div><div class="dt"></div><div class="dt"></div><div class="dt"></div></div>
+  <style>.dt{width:16px;height:16px;border-radius:50%;border:2px solid var(--b1);background:var(--c1);transition:all .25s}.dt.on{background:var(--ac);border-color:var(--ac)}</style>
+  <div id="pE" style="color:var(--r);font-size:13px;min-height:20px;margin-bottom:12px"></div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:260px">
+  ${[1,2,3,4,5,6,7,8,9,'',0,'⌫'].map(d=>d===''?'<div></div>':`<button onclick="pTap('${d}')" style="width:72px;height:72px;border-radius:16px;border:1.5px solid var(--b1);background:var(--c1);color:var(--t1);font-size:${d==='⌫'?18:24}px;font-weight:600;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow)">${d}</button>`).join('')}
+  </div>
+  <div style="margin-top:28px;font-size:13px;color:var(--t4)">🔒 AES-256 Encrypted</div></div>`}
+
+window.pTap=async function(d){
+  if(d==='⌫'){_pv=_pv.slice(0,-1)}else if(_pv.length<4){_pv+=d}
+  document.querySelectorAll('.dt').forEach((dot,i)=>dot.classList.toggle('on',i<_pv.length));
+  if(_pv.length<4)return;const pin=_pv;_pv='';await new Promise(r=>setTimeout(r,200));
+  if(_pm==='setup'){_ps=pin;_pm='confirm';document.getElementById('pL').textContent='Confirm PIN';document.querySelectorAll('.dt').forEach(d=>d.classList.remove('on'))}
+  else if(_pm==='confirm'){if(pin===_ps){localStorage.setItem('ak_pin_hash',await hashPin(pin));_ck=await CR.dk(pin);await saveAll();render()}else{document.getElementById('pE').textContent="Didn't match";_pm='setup';document.getElementById('pL').textContent='Create 4-digit PIN';document.querySelectorAll('.dt').forEach(d=>d.classList.remove('on'))}}
+  else{if(await hashPin(pin)===localStorage.getItem('ak_pin_hash')){_ck=await CR.dk(pin);await loadAll();render()}else{document.getElementById('pE').textContent='Wrong PIN';document.querySelectorAll('.dt').forEach(d=>d.classList.remove('on'))}}
+};
+
+// ── API ──
+function rApi(app){app.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:28px">
+  <div style="font-size:48px;margin-bottom:20px">🔑</div>
+  <div style="font-size:22px;font-weight:700;margin-bottom:4px">One-Time Setup</div>
+  <p style="font-size:14px;color:var(--t3);margin-bottom:24px;text-align:center;max-width:300px;line-height:1.7">Keys encrypted save hongi. Kam se kam ek key zaroori hai.</p>
+  <div style="width:100%;margin-bottom:12px"><label style="font-size:13px;color:var(--t2);font-weight:600;display:block;margin-bottom:6px">Claude API Key <span style="color:var(--t4);font-weight:400">(recommended)</span></label>
+  <input id="kI" class="inp" placeholder="sk-ant-api03-..." style="font-family:IBM Plex Mono,monospace;font-size:14px"></div>
+  <div style="width:100%;margin-bottom:12px"><label style="font-size:13px;color:var(--t2);font-weight:600;display:block;margin-bottom:6px">Gemini API Key <span style="color:var(--t4);font-weight:400">(free backup)</span></label>
+  <input id="gI" class="inp" placeholder="AIza..." style="font-family:IBM Plex Mono,monospace;font-size:14px">
+  <div style="font-size:11px;color:var(--t4);margin-top:4px">aistudio.google.com se free key lo</div></div>
+  <div style="width:100%;margin-bottom:20px"><label style="font-size:13px;color:var(--t2);font-weight:600;display:block;margin-bottom:6px">ElevenLabs Key <span style="color:var(--t4);font-weight:400">(voice, optional)</span></label>
+  <input id="elI" class="inp" placeholder="xi-..." style="font-family:IBM Plex Mono,monospace;font-size:14px"></div>
+  <button onclick="const k=document.getElementById('kI').value.trim();const g=document.getElementById('gI').value.trim();if(k||g){S.apiKey=k;S.geminiKey=g;S.elKey=document.getElementById('elI').value.trim()||'';saveAll();render()}else{alert('Kam se kam ek API key daalo!')}" class="btn bp" style="width:100%;padding:14px;font-size:16px">Start AAKASH AI →</button>
+  <div style="margin-top:16px;padding:12px;background:var(--c2);border-radius:8px;border:1px solid var(--b1);width:100%;font-size:12px;color:var(--t3);line-height:1.7">📍 Data stored in your browser (localStorage), encrypted. Nothing sent anywhere except AI calls.</div></div>`}
+
+// ═══ MAIN ═══
+function rMain(app){
+  const allTabs=[{k:'chat',l:'💬 Chat'},{k:'vault',l:'📦 Vault'},{k:'notes',l:'📝 Notes'},{k:'finance',l:'💰'},{k:'habits',l:'📅'},{k:'timer',l:'⏰'},{k:'create',l:'＋'}];
+  const visibleTabs=allTabs.filter(t=>!(S.hiddenTabs||[]).includes(t.k));
+  if(S.hiddenTabs?.includes(tab))tab='chat';
+
+  app.innerHTML=`
+  <div style="padding:12px 16px 8px;flex-shrink:0;background:var(--c1);border-bottom:1px solid var(--b1);z-index:10">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:36px;height:36px;border-radius:12px;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-size:17px;font-weight:800;box-shadow:var(--shadow)">A</div>
+        <div>
+          <div style="font-size:16px;font-weight:700">AAKASH AI</div>
+          <div style="display:flex;gap:5px;margin-top:2px">
+            <span class="tag" style="background:var(--gBg);color:var(--g);border:1px solid var(--gBorder)">🔒 Encrypted</span>
+            ${S.thinkMode?'<span class="tag" style="background:var(--pBg);color:var(--p)">🤔 Deep</span>':''}
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button onclick="sT(gT()==='dark'?'light':'dark');render()" style="width:36px;height:36px;border-radius:10px;background:var(--c2);border:1.5px solid var(--b1);font-size:16px;display:flex;align-items:center;justify-content:center" title="Theme">${gT()==='dark'?'☀️':'🌙'}</button>
+        <button onclick="S.thinkMode=!S.thinkMode;saveAll();render()" style="width:36px;height:36px;border-radius:10px;background:${S.thinkMode?'var(--pBg)':'var(--c2)'};border:1.5px solid ${S.thinkMode?'rgba(124,58,237,.3)':'var(--b1)'};color:${S.thinkMode?'var(--p)':'var(--t4)'};font-size:16px;display:flex;align-items:center;justify-content:center" title="Deep Think">🤔</button>
+        <button onclick="openCall()" style="width:36px;height:36px;border-radius:10px;background:var(--gBg);border:1.5px solid var(--gBorder);color:var(--g);font-size:16px;display:flex;align-items:center;justify-content:center">📞</button>
+        <button onclick="openSettings()" style="width:36px;height:36px;border-radius:10px;background:var(--c2);border:1.5px solid var(--b1);color:var(--t3);font-size:16px;display:flex;align-items:center;justify-content:center">⚙️</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:3px;background:var(--bg);border-radius:10px;padding:3px">
+    ${visibleTabs.map(t=>`<button onclick="tab='${t.k}';rc()" style="flex:1;padding:8px 0;border-radius:8px;background:${tab===t.k?'var(--c1)':'transparent'};color:${tab===t.k?'var(--t1)':'var(--t4)'};font-size:13px;font-weight:${tab===t.k?'600':'400'};${tab===t.k?'box-shadow:var(--shadow)':''}">${t.l}</button>`).join('')}
+    </div>
+  </div>
+  <div id="ct" style="flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden"></div>`;
+  rc();
+}
+
+function rc(){const ct=document.getElementById('ct');if(!ct)return;({chat:rChat,vault:rVault,notes:rNotes,finance:rFinance,habits:rHabits,timer:rTimer,create:rCreate})[tab]?.(ct)}
+
+// ═══ CHAT ═══
+function rChat(ct){
+  ct.innerHTML=`
+  <div id="cm" style="flex:1;overflow-y:auto;padding:12px 16px;background:var(--bg)">
+  ${S.chat.length===0?`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;animation:fadeIn .5s">
+    <div style="width:72px;height:72px;border-radius:20px;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-size:32px;font-weight:800;margin-bottom:20px;box-shadow:var(--shadowLg)">A</div>
+    <div style="font-size:20px;font-weight:700;margin-bottom:6px">Namaste! 👋</div>
+    <p style="color:var(--t3);font-size:14px;text-align:center;max-width:280px;line-height:1.7;margin-bottom:20px">Main AAKASH hun — aapka personal AI. Kuch bhi bolo, main action lunga!</p>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:320px">
+    ${['🌅 Daily Brief','💰 Finance Check','📅 Habit Status','💡 Motivate Me','🎨 Customize App'].map(q=>
+      `<button onclick="sendMsg('${q}')" style="padding:10px 16px;border-radius:24px;background:var(--c1);border:1.5px solid var(--b1);color:var(--t2);font-size:14px;font-weight:500;box-shadow:var(--shadow)">${q}</button>`).join('')}
+    </div>
+  </div>`:
+  S.chat.map(m=>`<div style="display:flex;justify-content:${m.role==='user'?'flex-end':'flex-start'};margin-bottom:10px;animation:slideUp .3s">
+    ${m.role==='assistant'?'<div style="width:28px;height:28px;border-radius:9px;background:var(--grad);display:flex;align-items:center;justify-content:center;margin-right:8px;flex-shrink:0;margin-top:2px;color:#fff;font-size:13px;font-weight:800">A</div>':''}
+    <div style="max-width:82%;padding:12px 16px;border-radius:${m.role==='user'?'18px 18px 4px 18px':'4px 18px 18px 18px'};background:${m.role==='user'?'var(--grad)':'var(--c1)'};border:${m.role==='user'?'none':'1px solid var(--b1)'};font-size:15px;line-height:1.7;color:${m.role==='user'?'#fff':'var(--t1)'};box-shadow:var(--shadow)">
+      ${m.role==='user'?m.content.replace(/</g,'&lt;'):fmt(m.content)}
+      ${m.hasFile?'<div style="margin-top:6px;font-size:12px;color:var(--t3)">📎 File attached</div>':''}
+    </div>
+  </div>`).join('')+(loading?`<div style="display:flex;align-items:center;gap:8px;padding:6px"><div style="width:28px;height:28px;border-radius:9px;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:800">A</div><div style="display:flex;gap:5px;align-items:center">${[0,1,2].map(i=>`<div style="width:7px;height:7px;border-radius:50%;background:var(--ac);animation:dot 1s ${i*.2}s infinite"></div>`).join('')}<span style="font-size:13px;color:var(--t3);margin-left:6px">${S.thinkMode?'Deep thinking...':'Typing...'}</span></div></div>`:'')}
+  </div>
+  <div style="flex-shrink:0;padding:10px 16px 14px;border-top:1px solid var(--b1);background:var(--c1)">
+    <div style="display:flex;gap:8px;align-items:end">
+      <button onclick="pickFile()" style="width:42px;height:42px;border-radius:12px;background:var(--c2);border:1.5px solid var(--b1);color:var(--t3);font-size:18px;flex-shrink:0;display:flex;align-items:center;justify-content:center" title="Upload File">📎</button>
+      <textarea id="ci" class="inp" placeholder="Message AAKASH..." rows="1" style="flex:1;resize:none;min-height:42px;max-height:84px;border-radius:12px;padding:10px 14px" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}" oninput="this.style.height='42px';this.style.height=Math.min(this.scrollHeight,84)+'px'"></textarea>
+      <button onclick="sendMsg()" class="btn bp" style="width:42px;height:42px;padding:0;flex-shrink:0;border-radius:12px;font-size:18px">▸</button>
+    </div>
+    <div id="filePreview" style="display:none;margin-top:8px"></div>
+  </div>`;
+  const cm=document.getElementById('cm');if(cm)cm.scrollTop=cm.scrollHeight;
+}
+
+// ── FILE UPLOAD (Image + PDF text extraction) ──
+let pendingFile=null;
+window.pickFile=function(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='image/*,.pdf,.txt,.md';
+  inp.onchange=e=>{const f=e.target.files[0];if(!f)return;
+    if(f.type.startsWith('image/')){
+      const reader=new FileReader();reader.onload=()=>{
+        pendingFile={type:'image',data:reader.result,mime:f.type,name:f.name};showFilePreview()};reader.readAsDataURL(f);
+    }else if(f.type==='application/pdf'||f.name.endsWith('.pdf')){
+      const reader=new FileReader();reader.onload=()=>{
+        pendingFile={type:'pdf',data:reader.result,mime:'application/pdf',name:f.name};showFilePreview()};reader.readAsDataURL(f);
+    }else{
+      const reader=new FileReader();reader.onload=()=>{
+        pendingFile={type:'text',data:reader.result,name:f.name};showFilePreview()};reader.readAsText(f);
+    }
+  };inp.click();
+};
+
+function showFilePreview(){
+  const prev=document.getElementById('filePreview');if(!prev)return;
+  prev.style.display='block';
+  prev.innerHTML=`<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--c2);border-radius:10px;border:1px solid var(--b1)">
+    <span style="font-size:22px">${pendingFile.type==='image'?'🖼️':pendingFile.type==='pdf'?'📄':'📝'}</span>
+    <span style="font-size:13px;color:var(--t2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${pendingFile.name}</span>
+    <button onclick="pendingFile=null;document.getElementById('filePreview').style.display='none'" style="color:var(--r);font-size:16px;padding:4px">✕</button>
+  </div>`;
+}
+
+window.sendMsg=async function(text){
+  const inp=document.getElementById('ci');const content=text||(inp?inp.value.trim():'');
+  if(!content&&!pendingFile||loading)return;if(inp)inp.value='';
+  const userMsg={role:'user',content:content||'[File uploaded]'};if(pendingFile)userMsg.hasFile=true;
+  S.chat.push(userMsg);mc++;loading=true;rChat(document.getElementById('ct'));
+
+  let apiMessages=S.chat.slice(-20).map(m=>{
+    if(m===userMsg&&pendingFile){
+      if(pendingFile.type==='image'){
+        return{role:'user',content:[{type:'image',source:{type:'base64',media_type:pendingFile.mime,data:pendingFile.data.split(',')[1]}},{type:'text',text:content||'Ye notes/image analyze karo. Teacher ki tarah samjhao. Phir doubt poocho.'}]};
+      }else if(pendingFile.type==='pdf'){
+        return{role:'user',content:[{type:'document',source:{type:'base64',media_type:'application/pdf',data:pendingFile.data.split(',')[1]}},{type:'text',text:content||'Ye document padho aur teacher ki tarah samjhao. Simple Hinglish mein. Phir doubt poocho.'}]};
+      }else{
+        return{role:'user',content:content+'\n\n[Uploaded file content]:\n'+pendingFile.data};
+      }
+    }
+    return{role:m.role,content:m.content};
+  });
+
+  const reply=await ai(apiMessages,SOUL+getContext());
+  pendingFile=null;const fp=document.getElementById('filePreview');if(fp)fp.style.display='none';
+  S.chat.push({role:'assistant',content:reply});await saveAll();loading=false;rChat(document.getElementById('ct'));
+};
+
+// ═══ VAULT ═══
+let vf='all',ve=null;
+function rVault(ct){
+  const ic={note:'📝',task:'✅',goal:'🎯',idea:'💡',summary:'📋'};
+  const items=S.entries.filter(e=>vf==='all'||e.type===vf);
+  ct.innerHTML=`<div style="flex:1;display:flex;flex-direction:column;padding:10px 16px;min-height:0">
+  <div style="display:flex;gap:6px;overflow-x:auto;flex-shrink:0;margin-bottom:10px">
+  ${['all','task','goal','note','idea'].map(t=>`<button onclick="vf='${t}';rVault(document.getElementById('ct'))" style="padding:7px 16px;border-radius:24px;background:${vf===t?'var(--acBg2)':'var(--c1)'};border:1.5px solid ${vf===t?'var(--acBorder)':'var(--b1)'};color:${vf===t?'var(--ac)':'var(--t3)'};font-size:13px;font-weight:600;white-space:nowrap">${t[0].toUpperCase()+t.slice(1)}</button>`).join('')}
+  </div>
+  <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px">
+  ${!items.length?'<div style="display:flex;align-items:center;justify-content:center;flex:1;color:var(--t4)">No entries</div>':
+  items.map(e=>`<div class="cd" style="cursor:pointer;${ve===e.id?'border-color:var(--ac)':''}" onclick="ve=ve===${e.id}?null:${e.id};rVault(document.getElementById('ct'))">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0"><span style="font-size:18px">${ic[e.type]||'📝'}</span><span style="font-size:15px;font-weight:600;${e.done?'color:var(--t4);text-decoration:line-through':''};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.title}</span></div>
+      ${e.type==='task'||e.type==='goal'?`<button onclick="event.stopPropagation();S.entries.find(x=>x.id===${e.id}).done=!S.entries.find(x=>x.id===${e.id}).done;saveAll();rVault(document.getElementById('ct'))" style="width:26px;height:26px;border-radius:8px;border:2px solid ${e.done?'var(--g)':'var(--b1)'};background:${e.done?'var(--gBg)':'var(--c1)'};color:var(--g);font-size:14px;display:flex;align-items:center;justify-content:center">${e.done?'✓':''}</button>`:''}
+    </div>
+    ${ve===e.id&&e.content?`<div style="margin-top:10px"><div style="color:var(--t2);font-size:14px;line-height:1.7;padding:12px;background:var(--bg);border-radius:8px;margin-bottom:8px;white-space:pre-wrap">${fmt(e.content)}</div>
+    <button onclick="event.stopPropagation();S.entries=S.entries.filter(x=>x.id!==${e.id});saveAll();rVault(document.getElementById('ct'))" style="padding:6px 14px;font-size:13px;border-radius:6px;border:1px solid var(--rBorder);color:var(--r);background:var(--rBg);font-weight:600">Delete</button></div>`:''}</div>`).join('')}
+  </div></div>`;
+}
+
+// ═══ NOTES (with upload + AI teacher) ═══
+const FL=['Course Notes','Work Notes','Personal','AI/ML','Python','Business','Finance','General'];
+let nm='list',en=null,vn=null,na='';
+function rNotes(ct){
+  if(nm==='edit'){rNE(ct);return}if(nm==='view'){rNV(ct);return}
+  ct.innerHTML=`<div style="flex:1;display:flex;flex-direction:column;padding:10px 16px;min-height:0">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-shrink:0">
+    <div style="font-size:17px;font-weight:700">📝 Notes</div>
+    <div style="display:flex;gap:6px">
+      <button onclick="uploadNote()" class="btn bs" style="padding:8px 14px;font-size:13px">📎 Upload</button>
+      <button onclick="en={title:'',content:'',folder:'General'};nm='edit';rNotes(document.getElementById('ct'))" class="btn bp" style="padding:8px 14px;font-size:13px">+ New</button>
+    </div>
+  </div>
+  <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px">
+  ${!S.notes.length?`<div style="text-align:center;padding:40px;color:var(--t4)">
+    <div style="font-size:40px;margin-bottom:12px">📚</div>
+    <div style="font-size:15px;margin-bottom:8px">No notes yet</div>
+    <div style="font-size:13px;line-height:1.7">Upload notes (image/PDF/text) ya manually banao.<br>AAKASH AI teacher ki tarah samjhayega!</div>
+  </div>`:
+  S.notes.map(n=>`<div class="cd" style="cursor:pointer" onclick="vn=S.notes.find(x=>x.id===${n.id});na='';nm='view';rNotes(document.getElementById('ct'))">
+    <div style="display:flex;justify-content:space-between;align-items:start">
+      <div style="flex:1"><div style="font-size:15px;font-weight:600">${n.title}</div>
+      <div style="font-size:12px;color:var(--ac);margin-top:2px;font-weight:500">${n.folder}${n.uploaded?' · 📎 Uploaded':''}</div>
+      <div style="font-size:14px;color:var(--t3);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${(n.content||'').slice(0,80)}</div></div>
+      <button onclick="event.stopPropagation();if(confirm('Delete this note?')){S.notes=S.notes.filter(x=>x.id!==${n.id});saveAll();rNotes(document.getElementById('ct'))}" style="color:var(--t4);font-size:16px;padding:4px;flex-shrink:0">✕</button>
+    </div>
+  </div>`).join('')}
+  </div></div>`;
+}
+
+window.uploadNote=function(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='image/*,.pdf,.txt,.md,.doc,.docx';
+  inp.onchange=async e=>{
+    const f=e.target.files[0];if(!f)return;
+    const title=f.name.replace(/\.[^.]+$/,'');
+    if(f.type.startsWith('image/')){
+      const reader=new FileReader();reader.onload=()=>{
+        S.notes.unshift({id:Date.now(),title,content:'[Image note — use "Ask AI" to analyze]',folder:'Course Notes',uploaded:true,fileData:reader.result,fileType:'image',fileMime:f.type,createdAt:new Date().toISOString()});
+        saveAll();rNotes(document.getElementById('ct'));
+      };reader.readAsDataURL(f);
+    }else if(f.type==='application/pdf'){
+      const reader=new FileReader();reader.onload=()=>{
+        S.notes.unshift({id:Date.now(),title,content:'[PDF note — use "Ask AI" to analyze]',folder:'Course Notes',uploaded:true,fileData:reader.result,fileType:'pdf',fileMime:'application/pdf',createdAt:new Date().toISOString()});
+        saveAll();rNotes(document.getElementById('ct'));
+      };reader.readAsDataURL(f);
+    }else{
+      const reader=new FileReader();reader.onload=()=>{
+        S.notes.unshift({id:Date.now(),title,content:reader.result,folder:'Course Notes',uploaded:true,fileType:'text',createdAt:new Date().toISOString()});
+        saveAll();rNotes(document.getElementById('ct'));
+      };reader.readAsText(f);
+    }
+  };inp.click();
+};
+
+function rNE(ct){const n=en;ct.innerHTML=`<div style="flex:1;display:flex;flex-direction:column;padding:10px 16px;gap:10px;overflow-y:auto">
+  <div style="font-size:17px;font-weight:700">${n.id?'Edit':'New'} Note</div>
+  <input id="nT" class="inp" placeholder="Title" value="${n.title||''}" style="font-weight:600;font-size:16px">
+  <div style="display:flex;gap:6px;flex-wrap:wrap">${FL.map(f=>`<button onclick="en.folder='${f}';rNE(document.getElementById('ct'))" style="padding:6px 14px;border-radius:24px;background:${n.folder===f?'var(--acBg2)':'var(--c1)'};border:1.5px solid ${n.folder===f?'var(--acBorder)':'var(--b1)'};color:${n.folder===f?'var(--ac)':'var(--t3)'};font-size:13px;font-weight:600">${f}</button>`).join('')}</div>
+  <textarea id="nB" class="inp" placeholder="Write notes..." style="min-height:220px;resize:vertical;font-family:IBM Plex Mono,monospace;font-size:14px;line-height:1.8">${n.content||''}</textarea>
+  <div style="display:flex;gap:10px"><button onclick="en.title=document.getElementById('nT').value.trim()||'Untitled';en.content=document.getElementById('nB').value;en.updatedAt=new Date().toISOString();if(!en.id){en.id=Date.now();en.createdAt=en.updatedAt;S.notes.unshift(en)}else{const i=S.notes.findIndex(x=>x.id===en.id);if(i>=0)S.notes[i]=en}saveAll();nm='list';en=null;rNotes(document.getElementById('ct'))" class="btn bp" style="flex:1;padding:14px;font-size:15px">Save</button>
+  <button onclick="nm='list';en=null;rNotes(document.getElementById('ct'))" class="btn bs" style="padding:14px 20px">Cancel</button></div></div>`}
+
+function rNV(ct){const n=vn;ct.innerHTML=`<div style="flex:1;display:flex;flex-direction:column;min-height:0">
+  <div style="padding:14px 16px;border-bottom:1px solid var(--b1);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;background:var(--c1)">
+    <div><div style="font-size:17px;font-weight:700">${n.title}</div><div style="font-size:12px;color:var(--ac);font-weight:500">${n.folder}${n.uploaded?' · 📎':''}</div></div>
+    <div style="display:flex;gap:6px">
+      ${!n.uploaded?`<button onclick="en={...vn};nm='edit';rNotes(document.getElementById('ct'))" class="btn bs" style="padding:6px 12px;font-size:13px">Edit</button>`:''}
+      <button onclick="nm='list';vn=null;na='';rNotes(document.getElementById('ct'))" class="btn bs" style="padding:6px 12px;font-size:13px">Close</button>
+    </div>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:16px;background:var(--bg)">
+    ${n.fileType==='image'&&n.fileData?`<img src="${n.fileData}" style="max-width:100%;border-radius:8px;border:1px solid var(--b1);margin-bottom:12px">`:
+    n.fileType==='pdf'?`<div style="padding:20px;background:var(--c1);border-radius:8px;border:1px solid var(--b1);text-align:center;margin-bottom:12px"><div style="font-size:40px;margin-bottom:8px">📄</div><div style="font-size:14px;color:var(--t2)">PDF Document</div><div style="font-size:12px;color:var(--t3)">Use "Ask AI" below to analyze</div></div>`:''}
+    ${n.content&&!n.content.startsWith('[')?`<pre style="color:var(--t2);font-size:14px;font-family:IBM Plex Mono,monospace;white-space:pre-wrap;line-height:1.8;margin-bottom:14px">${n.content}</pre>`:''}
+    ${na?`<div class="cd" style="border-left:3px solid var(--ac);margin-bottom:10px"><div style="font-size:12px;color:var(--ac);font-weight:700;margin-bottom:6px">🎓 AAKASH Teacher</div><div style="font-size:14px;color:var(--t2);line-height:1.7">${fmt(na)}</div></div>`:''}
+  </div>
+  <div style="padding:10px 16px;border-top:1px solid var(--b1);background:var(--c1);flex-shrink:0">
+    <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">
+      ${['📖 Samjhao','❓ Quiz me','📝 Summary','🤔 Doubt hai'].map(q=>`<button onclick="askNote('${q}')" style="padding:6px 12px;border-radius:20px;background:var(--c2);border:1px solid var(--b1);color:var(--t2);font-size:12px;font-weight:500">${q}</button>`).join('')}
+    </div>
+    <div style="display:flex;gap:8px">
+      <input id="nQ" class="inp" placeholder="Ask about this note..." onkeydown="if(event.key==='Enter')askNote()" style="border-radius:12px">
+      <button onclick="askNote()" id="nAB" class="btn bp" style="flex-shrink:0;border-radius:12px;padding:10px 16px">Ask</button>
+    </div>
+  </div></div>`}
+
+window.askNote=async function(preset){
+  const q=preset||document.getElementById('nQ')?.value?.trim();if(!q||!vn)return;
+  const btn=document.getElementById('nAB');if(btn)btn.textContent='...';
+
+  let msgContent;
+  if(vn.fileType==='image'&&vn.fileData){
+    msgContent=[{type:'image',source:{type:'base64',media_type:vn.fileMime,data:vn.fileData.split(',')[1]}},{type:'text',text:`Note: "${vn.title}"\n\nUser question: ${q}\n\nTeacher mode: Explain in simple Hinglish. Give examples. Ask "koi doubt?" at end.`}];
+  }else if(vn.fileType==='pdf'&&vn.fileData){
+    msgContent=[{type:'document',source:{type:'base64',media_type:'application/pdf',data:vn.fileData.split(',')[1]}},{type:'text',text:`Note: "${vn.title}"\n\nUser question: ${q}\n\nTeacher mode: Explain in simple Hinglish. Give examples. Ask "koi doubt?" at end.`}];
+  }else{
+    msgContent=`Note "${vn.title}":\n${vn.content}\n\nQ: ${q}\n\nTeacher mode: Explain simply in Hinglish. Real examples. Ask "koi doubt?" at end.`;
+  }
+
+  na=await ai([{role:'user',content:msgContent}],SOUL+'\nYou are a patient teacher/tutor. Explain topics from the uploaded note simply. Use Hinglish. Break complex things into steps. Give examples. After explaining, always ask "Koi doubt hai?" to check understanding.');
+  rNV(document.getElementById('ct'));
+};
+
+// ═══ FINANCE ═══
+const EC=['Food','Transport','Rent','Shopping','Bills','Health','Education','Entertainment','Investment','Savings','Other'];
+let ft='overview',ec='Food',fa='';
+function rFinance(ct){
+  const tot=S.finance.expenses.reduce((s,e)=>s+e.amount,0),rem=S.finance.salary-tot;
+  const bc={};S.finance.expenses.forEach(e=>{bc[e.cat]=(bc[e.cat]||0)+e.amount});
+  ct.innerHTML=`<div style="flex:1;display:flex;flex-direction:column;padding:10px 16px;min-height:0">
+  <div style="display:flex;gap:3px;background:var(--bg);border-radius:10px;padding:3px;margin-bottom:10px;flex-shrink:0">
+  ${['overview','add','advice'].map(t=>`<button onclick="ft='${t}';rFinance(document.getElementById('ct'))" style="flex:1;padding:8px;border-radius:8px;background:${ft===t?'var(--c1)':'transparent'};color:${ft===t?'var(--t1)':'var(--t4)'};font-size:14px;font-weight:${ft===t?600:400};${ft===t?'box-shadow:var(--shadow)':''}">${t==='add'?'+ Add':t==='advice'?'🧠 AI':t[0].toUpperCase()+t.slice(1)}</button>`).join('')}
+  </div>
+  <div style="flex:1;overflow-y:auto">
+  ${ft==='overview'?`
+    <div class="cd" style="margin-bottom:10px;${S.finance.salary?'border-left:3px solid var(--g)':''}"><div style="font-size:12px;color:var(--t3);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Monthly Salary</div>
+    ${S.finance.salary?`<div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:26px;font-weight:700;color:var(--g)">${INR(S.finance.salary)}</div><button onclick="S.finance.salary=0;saveAll();rFinance(document.getElementById('ct'))" style="color:var(--t4);font-size:13px">Change</button></div>`:`<div style="display:flex;gap:8px"><input id="sI" class="inp" placeholder="₹ Salary" type="number"><button onclick="const v=parseFloat(document.getElementById('sI').value);if(v>0){S.finance.salary=v;saveAll();rFinance(document.getElementById('ct'))}" class="btn bp">Set</button></div>`}</div>
+    ${S.finance.salary?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+      <div class="cd" style="border-left:3px solid var(--r)"><div style="font-size:11px;color:var(--r);font-weight:600;text-transform:uppercase">Spent</div><div style="font-size:22px;font-weight:700;margin-top:4px">${INR(tot)}</div><div style="font-size:12px;color:var(--t3)">${((tot/S.finance.salary)*100).toFixed(0)}%</div></div>
+      <div class="cd" style="border-left:3px solid ${rem>=0?'var(--g)':'var(--r)'}"><div style="font-size:11px;color:${rem>=0?'var(--g)':'var(--r)'};font-weight:600;text-transform:uppercase">${rem>=0?'Left':'Over'}</div><div style="font-size:22px;font-weight:700;color:${rem>=0?'var(--g)':'var(--r)'};margin-top:4px">${INR(Math.abs(rem))}</div></div></div>`:''}
+    ${Object.keys(bc).length?`<div class="cd"><div style="font-size:12px;color:var(--t3);font-weight:600;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px">Breakdown</div>
+    ${Object.entries(bc).sort((a,b)=>b[1]-a[1]).map(([c,a])=>`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:14px;color:var(--t2)">${c}</span><span style="font-size:14px;font-weight:600">${INR(a)}</span></div><div style="height:6px;background:var(--bg);border-radius:3px;overflow:hidden"><div style="height:100%;width:${S.finance.salary?Math.min((a/S.finance.salary)*100,100):50}%;background:var(--grad);border-radius:3px"></div></div></div>`).join('')}</div>`:''}`
+  :ft==='add'?`<div><div style="font-size:17px;font-weight:700;margin-bottom:14px">Add Expense</div>
+    <input id="eA" class="inp" placeholder="₹ Amount" type="number" style="font-size:24px;font-weight:700;text-align:center;padding:20px;margin-bottom:12px;border-radius:14px">
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">${EC.map(c=>`<button onclick="ec='${c}';rFinance(document.getElementById('ct'))" style="padding:7px 14px;border-radius:24px;background:${ec===c?'var(--acBg2)':'var(--c1)'};border:1.5px solid ${ec===c?'var(--acBorder)':'var(--b1)'};color:${ec===c?'var(--ac)':'var(--t3)'};font-size:13px;font-weight:600">${c}</button>`).join('')}</div>
+    <input id="eD" class="inp" placeholder="Description" style="margin-bottom:12px">
+    <button onclick="const a=parseFloat(document.getElementById('eA')?.value);if(a>0){S.finance.expenses.push({id:Date.now(),amount:a,cat:ec,desc:document.getElementById('eD')?.value||'',date:new Date().toISOString()});saveAll();ft='overview';rFinance(document.getElementById('ct'))}" class="btn bp" style="width:100%;padding:14px;font-size:16px">Add Expense</button></div>`
+  :`<div>${!S.finance.salary?'<div style="color:var(--t3);text-align:center;padding:20px">Set salary first.</div>':`
+    <button onclick="getFA()" id="faB" class="btn bp" style="width:100%;padding:14px;margin-bottom:14px">Analyze & Wealth Roadmap</button>
+    ${fa?`<div class="cd" style="border-left:3px solid var(--ac)"><div style="font-size:14px;line-height:1.7">${fmt(fa)}</div></div>`:''}`}</div>`}
+  </div></div>`;
+}
+window.getFA=async function(){document.getElementById('faB').textContent='Analyzing...';const tot=S.finance.expenses.reduce((s,e)=>s+e.amount,0);const bc={};S.finance.expenses.forEach(e=>{bc[e.cat]=(bc[e.cat]||0)+e.amount});
+fa=await ai([{role:'user',content:`Salary:₹${S.finance.salary}.Expenses:${JSON.stringify(bc)}.Spent:₹${tot}.Left:₹${S.finance.salary-tot}. Full analysis+SIP+crore plan.`}],SOUL+'\nFinancial expert. Specific numbers.');rFinance(document.getElementById('ct'))};
+
+// ═══ HABITS ═══
+function rHabits(ct){
+  const t=td(),done=S.habitLog[t]||[];
+  const streak=h=>{let s=0,d=new Date();for(let i=0;i<365;i++){const ds=d.toISOString().slice(0,10);if((S.habitLog[ds]||[]).includes(h.id))s++;else if(i>0)break;d.setDate(d.getDate()-1)}return s};
+  ct.innerHTML=`<div style="flex:1;display:flex;flex-direction:column;padding:10px 16px;min-height:0">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-shrink:0">
+    <div style="font-size:17px;font-weight:700">📅 Habits</div>
+    <button onclick="const n=prompt('Habit name:');if(n?.trim()){S.habits.push({id:Date.now(),name:n.trim()});saveAll();rHabits(document.getElementById('ct'))}" class="btn bp" style="padding:8px 16px;font-size:14px">+ Add</button>
+  </div>
+  <div class="cd" style="text-align:center;margin-bottom:12px;padding:20px;border-left:3px solid ${done.length===S.habits.length&&S.habits.length?'var(--g)':'var(--ac)'}">
+    <div style="font-size:14px;color:var(--t3)">${new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'})}</div>
+    <div style="font-size:40px;font-weight:700;color:${done.length===S.habits.length&&S.habits.length?'var(--g)':'var(--t1)'};margin-top:4px">${done.length}<span style="font-size:18px;color:var(--t4)"> / ${S.habits.length}</span></div>
+    ${done.length===S.habits.length&&S.habits.length?'<div style="font-size:14px;color:var(--g);margin-top:6px;font-weight:600">🎉 All done!</div>':''}
+  </div>
+  <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px">
+  ${!S.habits.length?'<div style="text-align:center;padding:30px;color:var(--t4)">Add your first habit!</div>':
+  S.habits.map(h=>{const ok=done.includes(h.id),st=streak(h);return`
+    <div class="cd" style="display:flex;align-items:center;gap:14px;${ok?'border-color:var(--gBorder)':''}">
+      <button onclick="const t=td();if(!S.habitLog[t])S.habitLog[t]=[];const i=S.habitLog[t].indexOf(${h.id});if(i>=0)S.habitLog[t].splice(i,1);else S.habitLog[t].push(${h.id});saveAll();rHabits(document.getElementById('ct'))" style="width:30px;height:30px;border-radius:10px;border:2px solid ${ok?'var(--g)':'var(--b2)'};background:${ok?'var(--g)':'var(--c1)'};color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0">${ok?'✓':''}</button>
+      <div style="flex:1"><div style="font-size:15px;font-weight:600;${ok?'color:var(--t3)':''}">${h.name}</div>
+      ${st>1?`<div style="font-size:13px;color:var(--y);font-weight:600">🔥 ${st} days</div>`:''}</div>
+      <button onclick="if(confirm('Delete?')){S.habits=S.habits.filter(x=>x.id!==${h.id});saveAll();rHabits(document.getElementById('ct'))}" style="color:var(--t4);font-size:16px">✕</button>
+    </div>`}).join('')}
+  </div></div>`;
+}
+
+// ═══ TIMER ═══
+let pm={on:false,time:1500,mode:'work',sess:0},pi=null;
+function rTimer(ct){const min=Math.floor(pm.time/60),sec=pm.time%60;
+  ct.innerHTML=`<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px">
+  <div style="font-size:17px;font-weight:700;margin-bottom:8px">⏰ Pomodoro</div>
+  <div style="font-size:14px;color:${pm.mode==='work'?'var(--ac)':'var(--g)'};margin-bottom:32px;letter-spacing:3px;font-weight:600;text-transform:uppercase">${pm.mode==='work'?'Focus':'Break'}</div>
+  <div style="width:200px;height:200px;border-radius:50%;border:4px solid ${pm.mode==='work'?'var(--ac)':'var(--g)'};display:flex;align-items:center;justify-content:center;margin-bottom:32px;${pm.on?'animation:pulse 2s infinite':''}">
+    <div style="font-size:52px;font-weight:300;font-family:IBM Plex Mono,monospace">${String(min).padStart(2,'0')}:${String(sec).padStart(2,'0')}</div>
+  </div>
+  <div style="display:flex;gap:12px;margin-bottom:24px">
+    <button onclick="if(pm.on){clearInterval(pi);pm.on=false}else{pm.on=true;pi=setInterval(()=>{pm.time--;if(pm.time<=0){clearInterval(pi);pm.on=false;if(pm.mode==='work'){pm.sess++;pm.mode='break';pm.time=300}else{pm.mode='work';pm.time=1500}if('Notification' in window&&Notification.permission==='granted')new Notification('AAKASH AI',{body:pm.mode==='break'?'Break time!':'Focus!',icon:'icon-192.png'})}rTimer(document.getElementById('ct'))},1000)}rTimer(document.getElementById('ct'))" class="btn ${pm.on?'bs':'bp'}" style="padding:14px 36px;font-size:16px">${pm.on?'⏸ Pause':'▶ Start'}</button>
+    <button onclick="clearInterval(pi);pm={on:false,time:1500,mode:'work',sess:pm.sess};rTimer(document.getElementById('ct'))" class="btn bs" style="padding:14px 24px">Reset</button>
+  </div>
+  <div style="font-size:14px;color:var(--t3)">Sessions: <span style="color:var(--ac);font-weight:700;font-size:18px">${pm.sess}</span></div></div>`}
+
+// ═══ CREATE ═══
+let ctp='task';
+function rCreate(ct){ct.innerHTML=`<div style="flex:1;display:flex;flex-direction:column;padding:10px 16px;gap:12px;overflow-y:auto">
+  <div style="font-size:17px;font-weight:700">Quick Create</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+  ${[{k:'task',i:'✅',l:'Task'},{k:'goal',i:'🎯',l:'Goal'},{k:'note',i:'📝',l:'Note'},{k:'idea',i:'💡',l:'Idea'}].map(t=>`<button onclick="ctp='${t.k}';rCreate(document.getElementById('ct'))" style="padding:10px 18px;border-radius:24px;background:${ctp===t.k?'var(--acBg2)':'var(--c1)'};border:1.5px solid ${ctp===t.k?'var(--acBorder)':'var(--b1)'};color:${ctp===t.k?'var(--ac)':'var(--t3)'};font-size:14px;font-weight:600">${t.i} ${t.l}</button>`).join('')}
+  </div>
+  <input id="cT" class="inp" placeholder="Title" style="font-weight:600;font-size:16px">
+  <textarea id="cB" class="inp" placeholder="Details..." style="min-height:140px;resize:vertical;font-family:IBM Plex Mono,monospace;font-size:14px;line-height:1.8"></textarea>
+  <button onclick="const t=document.getElementById('cT')?.value?.trim(),b=document.getElementById('cB')?.value;if(t||b){S.entries.unshift({id:Date.now(),type:ctp,title:t||'Untitled',content:b,done:false,createdAt:new Date().toISOString()});saveAll();tab='vault';render()}" class="btn bp" style="padding:14px;font-size:16px">Save</button></div>`}
+
+// ═══ VOICE ═══
+window.openCall=function(){
+  const ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;z-index:100;background:var(--overlay);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:16px;animation:fadeIn .2s';
+  ov.innerHTML=`<div style="background:var(--c1);border-radius:20px;padding:24px;max-width:340px;width:100%;border:1px solid var(--b1);box-shadow:var(--shadowLg)">
+  <div style="font-size:17px;font-weight:700;margin-bottom:14px">📞 Voice Call</div>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;max-height:300px;overflow-y:auto">
+  ${Object.entries(VOICES).map(([k,v])=>`<button onclick="S.voiceMood='${k}';saveAll();this.closest('div[style*=fixed]').remove();startCall()" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;border:1.5px solid ${S.voiceMood===k?'var(--acBorder)':'var(--b1)'};background:${S.voiceMood===k?'var(--acBg)':'var(--c1)'};text-align:left;width:100%">
+    <span style="font-size:22px">${v.label.split(' ')[0]}</span><div><div style="font-size:15px;font-weight:600;color:${S.voiceMood===k?'var(--ac)':'var(--t1)'}">${v.label.split(' ').slice(1).join(' ')}</div><div style="font-size:13px;color:var(--t3)">${v.desc}</div></div></button>`).join('')}
+  </div>
+  <button onclick="this.closest('div[style*=fixed]').remove()" class="btn bs" style="width:100%;padding:12px">Cancel</button></div>`;
+  document.body.appendChild(ov);
+};
+
+window.startCall=function(){
+  const mood=VOICES[S.voiceMood]||VOICES.rachel;
+  const ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center';
+  ov.innerHTML=`<div style="width:88px;height:88px;border-radius:24px;background:var(--grad);display:flex;align-items:center;justify-content:center;margin-bottom:20px;animation:glow 2s infinite;color:#fff;font-size:32px;font-weight:800;box-shadow:var(--shadowLg)">A</div>
+  <div style="font-size:20px;font-weight:700;margin-bottom:4px">AAKASH AI</div>
+  <div style="font-size:14px;color:var(--ac);margin-bottom:6px">${mood.label}</div>
+  <div id="cTm" style="font-size:32px;font-weight:300;margin-bottom:10px;font-family:IBM Plex Mono,monospace">0:00</div>
+  <div id="cSt" style="font-size:15px;color:var(--g);margin-bottom:28px">Connecting...</div>
+  <button id="cEd" style="width:64px;height:64px;border-radius:20px;background:var(--r);border:none;color:#fff;font-size:22px;box-shadow:0 4px 24px rgba(220,38,38,.3);display:flex;align-items:center;justify-content:center">📞</button>
+  <div style="font-size:13px;color:var(--t4);margin-top:16px">🔒 Encrypted</div>`;
+  document.body.appendChild(ov);
+  let dur=0,alive=true,rec;
+  const tmr=setInterval(()=>{dur++;const t=ov.querySelector('#cTm');if(t)t.textContent=`${Math.floor(dur/60)}:${(dur%60).toString().padStart(2,'0')}`},1000);
+  const end=()=>{alive=false;clearInterval(tmr);speechSynthesis?.cancel();try{rec?.stop()}catch{}ov.remove()};
+  ov.querySelector('#cEd').onclick=end;
+  const speak=(text,cb)=>{ov.querySelector('#cSt').textContent='Speaking...';ov.querySelector('#cSt').style.color='var(--ac)';const clean=text.replace(/[\u{1F300}-\u{1FAD6}\u{2600}-\u{27BF}∞₹🔧]/gu,'').replace(/<[^>]*>/g,'').replace(/\*+/g,'').replace(/#+/g,'').replace(/→|›/g,'').replace(/```[\s\S]*?```/g,'').trim();if(!clean){cb?.();return}
+    if(S.elKey&&mood.elId){fetch(`https://api.elevenlabs.io/v1/text-to-speech/${mood.elId}`,{method:'POST',headers:{'Content-Type':'application/json','xi-api-key':S.elKey},body:JSON.stringify({text:clean.slice(0,500),model_id:'eleven_multilingual_v2',voice_settings:{stability:.5,similarity_boost:.75}})}).then(r=>{if(!r.ok)throw 0;return r.blob()}).then(b=>{const u=URL.createObjectURL(b),a=new Audio(u);a.onended=()=>{URL.revokeObjectURL(u);if(alive)cb?.()};a.onerror=()=>{URL.revokeObjectURL(u);fbS(clean,cb)};a.play().catch(()=>fbS(clean,cb))}).catch(()=>fbS(clean,cb));return}fbS(clean,cb)};
+  const fbS=(c,cb)=>{if(!speechSynthesis){cb?.();return}speechSynthesis.cancel();const sn=c.match(/[^.!?।]+[.!?।]*/g)||[c];let i=0;const nx=()=>{if(i>=sn.length||!alive){cb?.();return}const s=sn[i].trim();i++;if(!s){nx();return}const u=new SpeechSynthesisUtterance(s);const v=speechSynthesis.getVoices();let hv=v.find(x=>x.name.includes('Google')&&x.lang.startsWith('hi'))||v.find(x=>x.lang.startsWith('hi'))||v.find(x=>x.lang==='en-IN')||v[0];if(hv)u.voice=hv;u.lang=hv?.lang||'hi-IN';u.pitch=mood.pitch;u.rate=mood.rate;u.onend=()=>{if(alive)nx()};u.onerror=()=>{if(alive)nx()};speechSynthesis.speak(u)};nx()};
+  const listen=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return;rec=new SR();rec.lang='hi-IN';rec.continuous=true;rec.interimResults=true;let final='',st=null;ov.querySelector('#cSt').textContent='Listening...';ov.querySelector('#cSt').style.color='var(--g)';
+    rec.onresult=e=>{let im='';for(let i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal)final+=e.results[i][0].transcript+' ';else im+=e.results[i][0].transcript}if(final||im){ov.querySelector('#cSt').textContent='"'+(final+im).slice(-50)+'"';ov.querySelector('#cSt').style.color='var(--t1)'}clearTimeout(st);if(final.trim())st=setTimeout(()=>{try{rec.stop()}catch{}},2000)};
+    rec.onend=async()=>{clearTimeout(st);if(final.trim()&&alive){ov.querySelector('#cSt').textContent='Thinking...';ov.querySelector('#cSt').style.color='var(--y)';const reply=await ai([...S.chat.slice(-10),{role:'user',content:final.trim()}],SOUL+getContext()+'\nVoice. SHORT (2-3 sentences). No formatting.');S.chat.push({role:'user',content:final.trim()},{role:'assistant',content:reply});await saveAll();final='';if(reply&&alive&&!reply.startsWith('⚠️'))speak(reply,()=>{if(alive)listen()});else if(alive)setTimeout(()=>{if(alive)listen()},2000)}else if(alive)setTimeout(()=>{if(alive)listen()},500)};
+    rec.onerror=e=>{if(e.error==='no-speech'&&alive)setTimeout(()=>{if(alive)listen()},500);else if(alive)setTimeout(listen,1000)};try{rec.start()}catch{setTimeout(()=>{if(alive)listen()},2000)}};
+  if(speechSynthesis.getVoices().length===0)speechSynthesis.onvoiceschanged=()=>{if(alive)speak('Haan boliye, kya help chahiye?',()=>{if(alive)listen()})};
+  else setTimeout(()=>{if(alive)speak('Haan boliye, kya help chahiye?',()=>{if(alive)listen()})},500);
+};
+
+// ═══ SETTINGS ═══
+window.openSettings=function(){
+  const ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;z-index:100;background:var(--overlay);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:16px;animation:fadeIn .2s';
+  ov.innerHTML=`<div style="background:var(--c1);border-radius:20px;padding:24px;max-width:360px;width:100%;border:1px solid var(--b1);max-height:90vh;overflow-y:auto;box-shadow:var(--shadowLg)">
+  <div style="font-size:18px;font-weight:700;margin-bottom:16px">⚙️ Settings</div>
+
+  <div style="padding:14px;background:var(--bg);border-radius:12px;border:1px solid var(--b1);margin-bottom:14px;font-size:14px;color:var(--t2);line-height:2">
+    📦 ${S.entries.length} entries · 📝 ${S.notes.length} notes · 📅 ${S.habits.length} habits<br>
+    💬 ${S.chat.length} msgs · 💰 ${S.finance.expenses.length} expenses<br>
+    🧠 ${S.memoryFacts?.length||0} memories · 💾 ${formatBytes(getStorageSize())}
+  </div>
+
+  <!-- THEME -->
+  <div style="font-size:13px;color:var(--t2);margin-bottom:6px;font-weight:600">Theme</div>
+  <div style="display:flex;gap:6px;margin-bottom:12px">
+    <button onclick="sT('light');this.closest('div[style*=fixed]').remove();render();openSettings()" style="flex:1;padding:10px;border-radius:8px;background:${gT()==='light'?'var(--acBg2)':'var(--c2)'};border:1.5px solid ${gT()==='light'?'var(--acBorder)':'var(--b1)'};color:${gT()==='light'?'var(--ac)':'var(--t3)'};font-weight:600;font-size:14px">☀️ Light</button>
+    <button onclick="sT('dark');this.closest('div[style*=fixed]').remove();render();openSettings()" style="flex:1;padding:10px;border-radius:8px;background:${gT()==='dark'?'var(--acBg2)':'var(--c2)'};border:1.5px solid ${gT()==='dark'?'var(--acBorder)':'var(--b1)'};color:${gT()==='dark'?'var(--ac)':'var(--t3)'};font-weight:600;font-size:14px">🌙 Dark</button>
+  </div>
+
+  <!-- ACCENT COLOR -->
+  <div style="font-size:13px;color:var(--t2);margin-bottom:6px;font-weight:600">Accent Color</div>
+  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+  ${['#c2410c','#2563eb','#7c3aed','#16a34a','#dc2626','#ca8a04','#0891b2','#be185d'].map(c=>`<button onclick="localStorage.setItem('ak_accent','${c}');applyCustom();this.closest('div[style*=fixed]').remove();render();openSettings()" style="width:36px;height:36px;border-radius:10px;background:${c};border:3px solid ${localStorage.getItem('ak_accent')===c||(!localStorage.getItem('ak_accent')&&c==='#c2410c')?'var(--t1)':'transparent'}"></button>`).join('')}
+  </div>
+
+  <!-- FONT SIZE -->
+  <div style="font-size:13px;color:var(--t2);margin-bottom:6px;font-weight:600">Font Size</div>
+  <div style="display:flex;gap:6px;margin-bottom:12px">
+  ${[{v:'13',l:'Small'},{v:'15',l:'Medium'},{v:'17',l:'Large'}].map(f=>`<button onclick="localStorage.setItem('ak_fontsize','${f.v}');applyCustom();this.closest('div[style*=fixed]').remove();render();openSettings()" style="flex:1;padding:8px;border-radius:8px;background:${(localStorage.getItem('ak_fontsize')||'15')===f.v?'var(--acBg2)':'var(--c2)'};border:1.5px solid ${(localStorage.getItem('ak_fontsize')||'15')===f.v?'var(--acBorder)':'var(--b1)'};color:${(localStorage.getItem('ak_fontsize')||'15')===f.v?'var(--ac)':'var(--t3)'};font-size:13px;font-weight:600">${f.l}</button>`).join('')}
+  </div>
+
+  <!-- VISIBLE TABS -->
+  <div style="font-size:13px;color:var(--t2);margin-bottom:6px;font-weight:600">Visible Tabs</div>
+  <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap">
+  ${['vault','notes','finance','habits','timer','create'].map(t=>{const hidden=(S.hiddenTabs||[]).includes(t);return`<button onclick="if(${hidden}){S.hiddenTabs=S.hiddenTabs.filter(x=>x!=='${t}')}else{S.hiddenTabs.push('${t}')}saveAll();this.closest('div[style*=fixed]').remove();render();openSettings()" style="padding:6px 14px;border-radius:24px;background:${hidden?'var(--rBg)':'var(--gBg)'};border:1px solid ${hidden?'var(--rBorder)':'var(--gBorder)'};color:${hidden?'var(--r)':'var(--g)'};font-size:12px;font-weight:600">${hidden?'✕':'✓'} ${t}</button>`}).join('')}
+  </div>
+
+  <!-- CUSTOM RULES -->
+  <div style="font-size:13px;color:var(--t2);margin-bottom:6px;font-weight:600">Custom AI Rules (${(S.customRules||[]).length})</div>
+  <div style="margin-bottom:6px">
+  ${(S.customRules||[]).map((r,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:var(--bg);border-radius:6px;margin-bottom:4px;font-size:13px;color:var(--t2)"><span>→ ${r}</span><button onclick="S.customRules.splice(${i},1);saveAll();this.closest('div[style*=fixed]').remove();openSettings()" style="color:var(--r);font-size:12px;font-weight:600">✕</button></div>`).join('')||'<div style="font-size:12px;color:var(--t4);padding:4px">No custom rules. Chat mein bolo "add rule: always reply in Hindi"</div>'}
+  </div>
+  <div style="display:flex;gap:6px;margin-bottom:14px">
+    <input id="newRule" class="inp" placeholder="Add custom rule..." style="font-size:13px">
+    <button onclick="const r=document.getElementById('newRule').value.trim();if(r){if(!S.customRules)S.customRules=[];S.customRules.push(r);saveAll();this.closest('div[style*=fixed]').remove();openSettings()}" class="btn bp" style="padding:8px 14px;font-size:13px;flex-shrink:0">Add</button>
+  </div>
+
+  <!-- MEMORIES -->
+  ${S.memoryFacts?.length?`<div style="font-size:13px;color:var(--t2);margin-bottom:6px;font-weight:600">🧠 Memories (${S.memoryFacts.length})</div>
+  <div style="padding:8px;background:var(--bg);border-radius:8px;margin-bottom:14px;max-height:100px;overflow-y:auto;border:1px solid var(--b1)">
+  ${S.memoryFacts.map((f,i)=>`<div style="font-size:13px;color:var(--t2);margin-bottom:4px;display:flex;justify-content:space-between;gap:8px"><span>→ ${f.fact}</span><button onclick="S.memoryFacts.splice(${i},1);saveAll();this.closest('div[style*=fixed]').remove();openSettings()" style="color:var(--r);font-size:12px;flex-shrink:0">✕</button></div>`).join('')}
+  </div>`:''}
+
+  <!-- API KEYS -->
+  <div style="font-size:13px;color:var(--t2);margin-bottom:4px;font-weight:600">Claude API Key</div>
+  <div style="display:flex;gap:6px;margin-bottom:8px"><input id="sK" class="inp" value="${S.apiKey}" style="font-size:12px;font-family:IBM Plex Mono,monospace"><button onclick="S.apiKey=document.getElementById('sK').value.trim();saveAll();alert('✅')" class="btn bp" style="padding:8px 12px;font-size:12px;flex-shrink:0">Save</button></div>
+  <div style="font-size:13px;color:var(--t2);margin-bottom:4px;font-weight:600">Gemini API Key <span style="font-weight:400;color:var(--t4)">(free backup)</span></div>
+  <div style="display:flex;gap:6px;margin-bottom:8px"><input id="sGK" class="inp" value="${S.geminiKey||''}" placeholder="AIza..." style="font-size:12px;font-family:IBM Plex Mono,monospace"><button onclick="S.geminiKey=document.getElementById('sGK').value.trim();saveAll();alert('✅')" class="btn bp" style="padding:8px 12px;font-size:12px;flex-shrink:0">Save</button></div>
+  <div style="font-size:13px;color:var(--t2);margin-bottom:4px;font-weight:600">ElevenLabs Key</div>
+  <div style="display:flex;gap:6px;margin-bottom:14px"><input id="sEL" class="inp" value="${S.elKey||''}" placeholder="xi-..." style="font-size:12px;font-family:IBM Plex Mono,monospace"><button onclick="S.elKey=document.getElementById('sEL').value.trim();saveAll();alert('✅')" class="btn bp" style="padding:8px 12px;font-size:12px;flex-shrink:0">Save</button></div>
+
+  <!-- DATA INFO -->
+  <div style="padding:12px;background:var(--yBg);border-radius:8px;border:1px solid rgba(202,138,4,.2);margin-bottom:14px;font-size:12px;color:var(--t2);line-height:1.7">
+    <strong>📍 Data Location:</strong> Browser localStorage on this device. AES-256 encrypted. Export backups regularly!
+  </div>
+
+  <!-- ACTIONS -->
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <button onclick="const d=JSON.stringify(S);const b=new Blob([d],{type:'application/json'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download='aakash-backup-'+td()+'.json';a.click();URL.revokeObjectURL(u)" style="width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--gBorder);background:var(--gBg);color:var(--g);font-size:14px;font-weight:600">📥 Export Backup</button>
+    <button onclick="const i=document.createElement('input');i.type='file';i.accept='.json';i.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=async()=>{try{const d=JSON.parse(r.result);if(confirm('Replace data?')){S={...S,...d};await saveAll();alert('✅');render()}}catch{alert('❌ Invalid')}};r.readAsText(f)};i.click()" style="width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--acBorder);background:var(--acBg);color:var(--ac);font-size:14px;font-weight:600">📤 Import Backup</button>
+    <button onclick="S.chat=[];mc=0;saveAll();alert('✅')" style="width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--b1);background:var(--c2);color:var(--t2);font-size:14px;font-weight:600">🗑️ Clear Chat</button>
+    <button onclick="_ck=null;this.closest('div[style*=fixed]').remove();render()" style="width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--b1);background:var(--c2);color:var(--t2);font-size:14px;font-weight:600">🔒 Lock App</button>
+    <button onclick="if(confirm('⚠️ DELETE ALL DATA?')){localStorage.clear();location.reload()}" style="width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--rBorder);background:var(--rBg);color:var(--r);font-size:14px;font-weight:600">⚠️ Wipe All</button>
+  </div>
+  <button onclick="this.closest('div[style*=fixed]').remove()" style="width:100%;margin-top:12px;padding:12px;border-radius:10px;background:var(--bg);color:var(--t3);font-size:14px;font-weight:600;border:1px solid var(--b1)">Close</button>
+  </div>`;
+  document.body.appendChild(ov);
+};
+
+// ═══ INIT ═══
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+if('Notification' in window&&Notification.permission==='default')Notification.requestPermission();
+render();
+</script>
+</body>
+</html>
