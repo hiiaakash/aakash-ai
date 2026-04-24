@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-title" content="AAKASH AI">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>AAKASH AI</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root,[data-theme="light"]{
+  --bg:#f8f9fb;--bg2:#fff;--bg3:#f1f3f7;
+  --c1:#fff;--c2:#f4f5f8;--c3:#eaecf2;
+  --b1:#dfe2ea;--b2:#c8cdd8;
+  --t1:#1a1d26;--t2:#4a4f5e;--t3:#7c8294;--t4:#a3a8b8;
+  --ac:var(--accent,#c2410c);--ac2:var(--accent2,#ea580c);
+  --acBg:rgba(194,65,12,.06);--acBg2:rgba(194,65,12,.12);--acBorder:rgba(194,65,12,.2);
+  --g:#16a34a;--gBg:rgba(22,163,74,.08);--gBorder:rgba(22,163,74,.2);
+  --r:#dc2626;--rBg:rgba(220,38,38,.06);--rBorder:rgba(220,38,38,.2);
+  --p:#7c3aed;--pBg:rgba(124,58,237,.06);
+  --y:#ca8a04;--yBg:rgba(202,138,4,.06);
+  --grad:linear-gradient(135deg,var(--ac),var(--ac2));
+  --shadow:0 1px 3px rgba(0,0,0,.06);--shadowMd:0 4px 12px rgba(0,0,0,.08);--shadowLg:0 8px 24px rgba(0,0,0,.1);
+  --overlay:rgba(0,0,0,.5);
+}
+[data-theme="dark"]{
+  --bg:#0c0c12;--bg2:#111118;--bg3:#18181f;
+  --c1:#16161e;--c2:#1c1c26;--c3:#24242e;
+  --b1:#2a2a38;--b2:#3a3a4a;
+  --t1:#e4e2ee;--t2:#a8a4b8;--t3:#6e6a80;--t4:#4a4660;
+  --acBg:rgba(251,146,60,.08);--acBg2:rgba(251,146,60,.15);--acBorder:rgba(251,146,60,.25);
+  --g:#22c55e;--gBg:rgba(34,197,94,.1);--gBorder:rgba(34,197,94,.25);
+  --r:#ef4444;--rBg:rgba(239,68,68,.08);--rBorder:rgba(239,68,68,.25);
+  --p:#a78bfa;--pBg:rgba(167,139,250,.08);
+  --y:#facc15;--yBg:rgba(250,204,21,.08);
+  --grad:linear-gradient(135deg,var(--ac),var(--ac2));
+  --shadow:0 1px 3px rgba(0,0,0,.3);--shadowMd:0 4px 12px rgba(0,0,0,.4);--shadowLg:0 8px 24px rgba(0,0,0,.5);
+  --overlay:rgba(0,0,0,.75);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-family:'DM Sans',sans-serif;font-size:var(--fontSize,15px);line-height:1.5;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+body{max-width:480px;margin:0 auto;display:flex;flex-direction:column}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--b2);border-radius:4px}
+button{font-family:inherit;cursor:pointer;border:none;background:none;font-size:inherit}
+input,textarea{font-family:inherit;background:none;border:none;outline:none;color:var(--t1);font-size:inherit}
+.inp{background:var(--c1);border:1.5px solid var(--b1);border-radius:8px;padding:12px 14px;color:var(--t1);width:100%;transition:all .2s;font-size:15px}
+.inp:focus{border-color:var(--ac);box-shadow:0 0 0 3px var(--acBg)}
+.inp::placeholder{color:var(--t4)}
+.btn{padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn:active{transform:scale(.97)}
+.bp{background:var(--grad);color:#fff;box-shadow:var(--shadow)}
+.bs{background:var(--c1);border:1.5px solid var(--b1);color:var(--t2)}
+.cd{background:var(--c1);border:1px solid var(--b1);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow);transition:all .2s}
+.tag{padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes glow{0%,100%{box-shadow:0 0 20px rgba(194,65,12,.15)}50%{box-shadow:0 0 40px rgba(194,65,12,.3)}}
+@keyframes dot{0%,100%{opacity:.15}50%{opacity:.8}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+</style>
+</head>
+<body>
+<div id="app" style="display:flex;flex-direction:column;height:100%;overflow:hidden"></div>
+
+<!-- Load order matters: foundation → features → glue -->
+<script src="crypto.js"></script>
+<script src="state.js"></script>
+<script src="tools.js"></script>
+<script src="providers.js"></script>
+<script src="ai.js"></script>
+<script src="chat.js"></script>
+<script src="projects.js"></script>
+<script src="vault.js"></script>
+<script src="notes.js"></script>
+<script src="finance.js"></script>
+<script src="habits.js"></script>
+<script src="timer.js"></script>
+<script src="create.js"></script>
+<script src="voice.js"></script>
+<script src="settings.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
