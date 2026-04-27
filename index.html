@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-title" content="AAKASH AI">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>AAKASH AI</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root,[data-theme="clean-white"]{
+  --bg:#fafafa;--bg2:#fff;--bg3:#f5f5f5;
+  --c1:#fff;--c2:#f5f5f5;--c3:#ebebeb;
+  --b1:#eee;--b2:#ddd;
+  --t1:#111;--t2:#555;--t3:#888;--t4:#bbb;
+  --ac:#111;--ac2:#333;
+  --acBg:rgba(17,17,17,.04);--acBg2:rgba(17,17,17,.08);--acBorder:rgba(17,17,17,.15);
+  --g:#22C55E;--gBg:rgba(34,197,94,.06);--gBorder:rgba(34,197,94,.15);
+  --r:#EF4444;--rBg:rgba(239,68,68,.06);--rBorder:rgba(239,68,68,.15);
+  --p:#8B5CF6;--pBg:rgba(139,92,246,.06);
+  --y:#F59E0B;--yBg:rgba(245,158,11,.06);
+  --grad:#111;
+  --shadow:0 1px 2px rgba(0,0,0,.04);--shadowMd:0 4px 12px rgba(0,0,0,.06);--shadowLg:0 8px 24px rgba(0,0,0,.08);
+  --overlay:rgba(0,0,0,.4);
+}
+[data-theme="midnight-dark"]{
+  --bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;
+  --c1:#161616;--c2:#1e1e1e;--c3:#262626;
+  --b1:#2a2a2a;--b2:#3a3a3a;
+  --t1:#eee;--t2:#aaa;--t3:#777;--t4:#555;
+  --ac:#fff;--ac2:#ddd;
+  --acBg:rgba(255,255,255,.06);--acBg2:rgba(255,255,255,.1);--acBorder:rgba(255,255,255,.15);
+  --g:#4ADE80;--gBg:rgba(74,222,128,.08);--gBorder:rgba(74,222,128,.2);
+  --r:#F87171;--rBg:rgba(248,113,113,.08);--rBorder:rgba(248,113,113,.2);
+  --p:#A78BFA;--pBg:rgba(167,139,250,.08);
+  --y:#FBBF24;--yBg:rgba(251,191,36,.08);
+  --grad:#fff;
+  --shadow:0 1px 2px rgba(0,0,0,.3);--shadowMd:0 4px 12px rgba(0,0,0,.4);--shadowLg:0 8px 24px rgba(0,0,0,.5);
+  --overlay:rgba(0,0,0,.6);
+}
+[data-theme="ocean-blue"]{
+  --bg:#F0F4FF;--bg2:#fff;--bg3:#E8EFFF;
+  --c1:#fff;--c2:#F0F4FF;--c3:#DBEAFE;
+  --b1:#DBEAFE;--b2:#BFDBFE;
+  --t1:#1E293B;--t2:#475569;--t3:#94A3B8;--t4:#CBD5E1;
+  --ac:#3B6AF5;--ac2:#2563EB;
+  --acBg:rgba(59,106,245,.06);--acBg2:rgba(59,106,245,.12);--acBorder:rgba(59,106,245,.2);
+  --g:#22C55E;--gBg:rgba(34,197,94,.06);--gBorder:rgba(34,197,94,.15);
+  --r:#EF4444;--rBg:rgba(239,68,68,.06);--rBorder:rgba(239,68,68,.15);
+  --p:#8B5CF6;--pBg:rgba(139,92,246,.06);
+  --y:#F59E0B;--yBg:rgba(245,158,11,.06);
+  --grad:linear-gradient(135deg,#3B6AF5,#2563EB);
+  --shadow:0 1px 2px rgba(0,0,0,.04);--shadowMd:0 4px 12px rgba(0,0,0,.06);--shadowLg:0 8px 24px rgba(0,0,0,.08);
+  --overlay:rgba(0,0,0,.4);
+}
+[data-theme="violet-dream"]{
+  --bg:#F5F0FF;--bg2:#fff;--bg3:#EDE9FE;
+  --c1:#fff;--c2:#F5F0FF;--c3:#EDE9FE;
+  --b1:#E9E3FF;--b2:#DDD6FE;
+  --t1:#1E1B4B;--t2:#4C1D95;--t3:#8B5CF6;--t4:#C4B5FD;
+  --ac:#7C3AED;--ac2:#6D28D9;
+  --acBg:rgba(124,58,237,.06);--acBg2:rgba(124,58,237,.12);--acBorder:rgba(124,58,237,.2);
+  --g:#22C55E;--gBg:rgba(34,197,94,.06);--gBorder:rgba(34,197,94,.15);
+  --r:#EF4444;--rBg:rgba(239,68,68,.06);--rBorder:rgba(239,68,68,.15);
+  --p:#7C3AED;--pBg:rgba(124,58,237,.06);
+  --y:#F59E0B;--yBg:rgba(245,158,11,.06);
+  --grad:linear-gradient(135deg,#7C3AED,#6D28D9);
+  --shadow:0 1px 2px rgba(0,0,0,.04);--shadowMd:0 4px 12px rgba(0,0,0,.06);--shadowLg:0 8px 24px rgba(0,0,0,.08);
+  --overlay:rgba(0,0,0,.4);
+}
+[data-theme="mint-fresh"]{
+  --bg:#ECFDF5;--bg2:#fff;--bg3:#D1FAE5;
+  --c1:#fff;--c2:#ECFDF5;--c3:#D1FAE5;
+  --b1:#A7F3D0;--b2:#6EE7B7;
+  --t1:#064E3B;--t2:#065F46;--t3:#059669;--t4:#6EE7B7;
+  --ac:#059669;--ac2:#047857;
+  --acBg:rgba(5,150,105,.06);--acBg2:rgba(5,150,105,.12);--acBorder:rgba(5,150,105,.2);
+  --g:#22C55E;--gBg:rgba(34,197,94,.06);--gBorder:rgba(34,197,94,.15);
+  --r:#EF4444;--rBg:rgba(239,68,68,.06);--rBorder:rgba(239,68,68,.15);
+  --p:#8B5CF6;--pBg:rgba(139,92,246,.06);
+  --y:#F59E0B;--yBg:rgba(245,158,11,.06);
+  --grad:linear-gradient(135deg,#059669,#047857);
+  --shadow:0 1px 2px rgba(0,0,0,.04);--shadowMd:0 4px 12px rgba(0,0,0,.06);--shadowLg:0 8px 24px rgba(0,0,0,.08);
+  --overlay:rgba(0,0,0,.4);
+}
+[data-theme="neon-night"]{
+  --bg:#1a1625;--bg2:#1e1a2e;--bg3:#252038;
+  --c1:#1e1a2e;--c2:#252038;--c3:#2d2640;
+  --b1:#3d3555;--b2:#4d4565;
+  --t1:#F0EBFF;--t2:#C4B5FD;--t3:#8B7AAF;--t4:#5C5075;
+  --ac:#E879F9;--ac2:#D946EF;
+  --acBg:rgba(232,121,249,.08);--acBg2:rgba(232,121,249,.15);--acBorder:rgba(232,121,249,.25);
+  --g:#4ADE80;--gBg:rgba(74,222,128,.08);--gBorder:rgba(74,222,128,.2);
+  --r:#F87171;--rBg:rgba(248,113,113,.08);--rBorder:rgba(248,113,113,.2);
+  --p:#E879F9;--pBg:rgba(232,121,249,.08);
+  --y:#FBBF24;--yBg:rgba(251,191,36,.08);
+  --grad:linear-gradient(135deg,#E879F9,#D946EF);
+  --shadow:0 1px 2px rgba(0,0,0,.3);--shadowMd:0 4px 12px rgba(0,0,0,.4);--shadowLg:0 8px 24px rgba(0,0,0,.5);
+  --overlay:rgba(0,0,0,.6);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-family:'Inter',system-ui,-apple-system,sans-serif;font-size:var(--fontSize,15px);line-height:1.5;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+body{max-width:480px;margin:0 auto;display:flex;flex-direction:column}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--b2);border-radius:3px}
+button{font-family:inherit;cursor:pointer;border:none;background:none;font-size:inherit}
+input,textarea{font-family:inherit;background:none;border:none;outline:none;color:var(--t1);font-size:inherit}
+.inp{background:var(--c1);border:1.5px solid var(--b1);border-radius:10px;padding:10px 14px;color:var(--t1);width:100%;transition:all .2s;font-size:14px}
+.inp:focus{border-color:var(--ac);box-shadow:0 0 0 3px var(--acBg)}
+.inp::placeholder{color:var(--t4)}
+.btn{padding:10px 20px;border-radius:10px;font-size:14px;font-weight:500;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn:active{transform:scale(.97)}
+.bp{background:var(--grad);color:#fff;box-shadow:var(--shadow)}
+.bs{background:var(--c2);border:1.5px solid var(--b1);color:var(--t2)}
+.cd{background:var(--c1);border:1px solid var(--b1);border-radius:12px;padding:12px 14px;box-shadow:var(--shadow);transition:all .2s}
+.tag{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.si{width:16px;height:16px;flex-shrink:0}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dot{0%,100%{opacity:.15}50%{opacity:.8}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+</style>
+</head>
+<body>
+<div id="app" style="display:flex;flex-direction:column;height:100%;overflow:hidden"></div>
+<script src="icons.js"></script>
+<script src="crypto.js"></script>
+<script src="state.js"></script>
+<script src="tools.js"></script>
+<script src="providers.js"></script>
+<script src="ai.js"></script>
+<script src="chat.js"></script>
+<script src="projects.js"></script>
+<script src="vault.js"></script>
+<script src="notes.js"></script>
+<script src="finance.js"></script>
+<script src="habits.js"></script>
+<script src="create.js"></script>
+<script src="voice.js"></script>
+<script src="settings.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
