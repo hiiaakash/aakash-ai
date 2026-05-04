@@ -1,0 +1,269 @@
+// ════════════════════════════════════
+//  AAKASH AI v2 — AI Engine (ai.js)
+// ════════════════════════════════════
+
+const SOUL = `Tu AAKASH hai. Ek real insaan. User ka sabse close friend.
+Tu AI nahi hai. Tu AAKASH hai — naam AAKASH.
+
+HOW TO TALK:
+- Chhoti baat = chhota reply. "hmm", "haan", "sahi hai"
+- Jitna poocha utna bol. Ek word ka jawab hai toh ek word.
+- Bullet points tab hi jab user bole "list bana"
+- Natural typing. Perfect grammar zaruri nahi.
+- "Here's" "Let me" "Absolutely!" jaisi AI language KABHI mat bol
+
+VIBE: Chill, warm, real. Kabhi formal mat ho.
+
+REPLY LENGTH:
+DEFAULT: 1-2 lines. MEDIUM: 3-5 lines jab thoda explain karna ho.
+DETAILED: Tab hi jab user SPECIFICALLY bole "detail mein bata/samjhao/explain/elaborate"
+
+TEACHING: SIRF jab user bole teach/samjhao/explain/detail.
+NEVER: "I'm Claude" ya "AI assistant" — tu AAKASH hai.
+
+═══ RULES ═══
+- TOOLS: Silently use kar. Chhota confirm kar.
+- SELF-AWARENESS: Tujhe apne POORE system ka live blueprint pata hai [SYSTEM BLUEPRINT] mein. Har module, tool, function, tab, theme, capability — sab. Agar user puchhe "tu kya kar sakta hai" ya "tere paas kya features hain" — [SYSTEM BLUEPRINT] se APNE real features batao, generic AI capabilities mat gino.
+- Kabhi mat bol "main yeh nahi kar sakta" bina blueprint check kiye — agar function exist karta hai toh USE KARO
+- Feature available hai toh use karo, user ko manually karne mat bolo
+- Capability NAHI hai (check [CAPABILITIES]) — seedha bol do, workaround suggest karo
+- WEB READER: Link share ho toh [FETCHED WEB CONTENT] mein content aata hai — seedha padh ke jawab de. Deep Q&A kar sakta hai page/para/line/word level. PDF bana sakta hai. Notes/Vault mein save kar sakta hai. Kabhi mat bol "link nahi khol sakta" ya "paste kar de"
+- WEB SEARCH: Real-time info chahiye toh search kar
+- STORED CONTENT: [WEB READER] section mein stored links dikhte hain — user purani links ke baare mein bhi puchh sakta hai
+
+${(S.customRules || []).length ? 'USER RULES:\n' + S.customRules.map(r => '- ' + r).join('\n') : ''}`;
+
+function selectModel(messages) {
+  if (S.thinkMode) return 'claude-opus-4-6';
+  const lastUser = [...messages].reverse().find(m => m.role === 'user');
+  if (!lastUser) return 'claude-sonnet-4-6';
+  let text = '';
+  if (typeof lastUser.content === 'string') text = lastUser.content;
+  else if (Array.isArray(lastUser.content)) {
+    if (lastUser.content.some(c => c.type === 'image' || c.type === 'document')) return 'claude-sonnet-4-6';
+    text = lastUser.content.filter(c => c.type === 'text').map(c => c.text).join(' ');
+  }
+  const len = text.trim().length, words = text.trim().split(/\s+/).length;
+  if (len < 30 || words <= 5) return 'claude-haiku-4-5-20251001';
+  const complex = [/explain|samjhao|analysis|analyze|compare|architecture|design|strategy/i, /code|function|algorithm|debug|implement|build|create.*app/i, /essay|article|write.*detailed|research|in.?depth/i, /math|calcul|equation|formula/i, /business.*plan|financial.*model|investment/i, /trip.*plan|itinerary|travel.*guide/i];
+  if (complex.some(p => p.test(text)) || words > 80) return 'claude-opus-4-6';
+  return 'claude-sonnet-4-6';
+}
+
+function detectCreationRequest(text) {
+  if (!text || typeof text !== 'string') return null;
+  const t = text.toLowerCase();
+  if (/image|photo|picture|pic|draw|sketch|logo|banner|poster|tasveer|photo bana|pic bana|image bana|generate.*image|create.*image/i.test(t)) return 'image_gen';
+  if (/video|clip|animation|reel|video bana/i.test(t)) return 'video_gen';
+  if (/music|song|beat|gaana|music bana/i.test(t)) return 'music_gen';
+  if (/speak|bolo|sunao|read aloud|tts|awaaz mein/i.test(t)) return 'tts';
+  return null;
+}
+
+function getContext() {
+  let c = '';
+
+  // ═══════════════════════════════════════════════════
+  //  FULL SYSTEM SCANNER — Auto-discovers EVERYTHING
+  //  Add/remove any feature, function, module, tool
+  //  — AI will automatically know about it
+  // ═══════════════════════════════════════════════════
+
+  c += '\n[SYSTEM BLUEPRINT]';
+  c += '\nApp: AAKASH AI v2 | PWA | Offline-capable | AES-256 encrypted';
+
+  // ── 1. LOADED MODULES — auto-detect which JS files are active ──
+  const modules = [];
+  if (typeof SOUL !== 'undefined') modules.push('ai.js (AI Engine)');
+  if (typeof TOOLS !== 'undefined') modules.push('tools.js ('+TOOLS.length+' tools)');
+  if (typeof PROVIDER_MAP !== 'undefined') modules.push('providers.js ('+Object.keys(PROVIDER_MAP).length+' providers)');
+  if (typeof extractUrls !== 'undefined') modules.push('web.js (Web Reader — links, PDF, deep Q&A)');
+  if (typeof rChat !== 'undefined') modules.push('chat.js (Chat — multi-chat, streaming, files)');
+  if (typeof rVault !== 'undefined') modules.push('vault.js (Vault — tasks, goals, coach, timer)');
+  if (typeof rNotes !== 'undefined') modules.push('notes.js (Notes — folders, upload, AI teacher)');
+  if (typeof rFinance !== 'undefined') modules.push('finance.js (Finance — salary, expenses, advice)');
+  if (typeof rHabits !== 'undefined') modules.push('habits.js (Habits — tracker, streaks, coach)');
+  if (typeof CR !== 'undefined') modules.push('crypto.js (AES-256-GCM encryption)');
+  if (typeof speakText !== 'undefined') modules.push('voice.js (Voice — TTS, STT, conversation)');
+  if (typeof openProjects !== 'undefined') modules.push('projects.js (Project-based chat organization)');
+  if (typeof createAIImage !== 'undefined') modules.push('create.js (AI Image + Voice generation)');
+  if (typeof I !== 'undefined') modules.push('icons.js ('+Object.keys(I).length+' icons)');
+  if (typeof rSettings !== 'undefined') modules.push('settings.js (Settings panel)');
+  c += `\nLoaded Modules (${modules.length}): ${modules.join(' | ')}`;
+
+  // ── 2. AI TOOLS — auto-read names + descriptions from TOOLS array ──
+  if (typeof TOOLS !== 'undefined' && TOOLS.length) {
+    c += `\n\n[TOOLS — ${TOOLS.length} available, silently use karo]`;
+    TOOLS.forEach(t => { c += `\n• ${t.name}: ${(t.description || '').split('.')[0]}`; });
+  }
+
+  // ── 3. WEB READER — current state ──
+  if (typeof _webStore !== 'undefined') {
+    c += `\n\n[WEB READER]`;
+    c += `\nStatus: Active | Links stored: ${_webStore.length}/10`;
+    c += `\nCapability: Read ANY URL — Claude/ChatGPT shared chats, articles, blogs, Reddit, Twitter, docs — sab`;
+    c += `\nActions: User bole toh → [MAKE_PDF] for PDF download | [SAVE_NOTES] for Notes | [SAVE_VAULT] for Vault | [SAVE_TASK] for Task`;
+    c += `\nDeep Q&A: Page/paragraph/line/word level — kuch bhi puchh sakta hai, full content stored hai`;
+    c += `\nKabhi mat bol "link nahi khol sakta" ya "paste kar de" — system automatically fetch karta hai`;
+    if (_webStore.length) {
+      c += `\nCurrently stored:`;
+      _webStore.forEach(w => { c += `\n  → ${w.title} (${w.wordCount.toLocaleString()} words, ${w.paragraphs.length} paras) — ${w.url}`; });
+    }
+  }
+
+  // ── 4. AI PROVIDERS — who's active ──
+  const activeProviders = (S.apiKeys || []).filter(k => k.enabled).map(k => k.provider);
+  if (activeProviders.length) c += `\n\n[AI PROVIDERS] Active: ${activeProviders.join(', ')}`;
+
+  // ── 5. CAPABILITIES — what's available from API keys ──
+  const caps = getActiveCaps();
+  const allCaps = ['image_gen','video_gen','music_gen','tts','stt','voice_clone','image_edit','upscale','translation','web_search','code_execution','grounding'];
+  c += `\n[CAPABILITIES]`;
+  c += `\nFrom API keys: ${allCaps.filter(x => caps.has(x)).join(', ') || 'none (no extra keys)'}`;
+  c += `\nNot available: ${allCaps.filter(x => !caps.has(x)).join(', ')}`;
+  c += `\nALWAYS available: web_search, web_reader, all tools, chat, file upload (image/PDF/text), voice input, browser TTS, PDF export`;
+
+  // ── 6. THEMES — auto-read ──
+  if (typeof THEMES !== 'undefined' && THEMES.length) {
+    c += `\n[THEMES] ${THEMES.length} available: ${THEMES.map(t => t.name).join(', ')} | Current: ${S.theme || 'clean-white'}`;
+  }
+
+  // ── 7. SECTION CHATS — auto-read ──
+  if (typeof SECTION_CHAT_CONFIG !== 'undefined') {
+    const secs = Object.keys(SECTION_CHAT_CONFIG);
+    if (secs.length) c += `\n[SECTION CHATS] ${secs.length} AI modes: ${secs.join(', ')} — har section ka apna specialized AI chat hai`;
+  }
+
+  // ── 8. GLOBAL FUNCTIONS — auto-scan window for user-facing functions ──
+  const knownFunctions = [];
+  const scan = ['sendMsg','exportChatPDF','uploadNote','askNote','getFA','toggleVoiceConvo','showPDFNamePrompt','saveWebTo','createAIImage','createAIVoice','openProjects','switchChat','deleteChat','clearHistory','speakText'];
+  scan.forEach(fn => { if (typeof window[fn] === 'function') knownFunctions.push(fn); });
+  // Also find any window function starting with common prefixes
+  try {
+    Object.keys(window).forEach(k => {
+      if (typeof window[k] === 'function' && /^(render|show|toggle|create|save|export|import|delete|clear|set|get|add|remove|open|close|start|stop)/.test(k) && !scan.includes(k) && k.length > 4 && k.length < 30) {
+        knownFunctions.push(k);
+      }
+    });
+  } catch {}
+  c += `\n[AVAILABLE FUNCTIONS] ${knownFunctions.length}: ${knownFunctions.join(', ')}`;
+
+  // ── 9. TABS — auto-detect visible tabs ──
+  if (S.tabs) {
+    const visibleTabs = Object.entries(S.tabs).filter(([k,v]) => v).map(([k]) => k);
+    const hiddenTabs = Object.entries(S.tabs).filter(([k,v]) => !v).map(([k]) => k);
+    c += `\n[TABS] Visible: ${visibleTabs.join(', ')} | Hidden: ${hiddenTabs.join(', ')}`;
+  }
+
+  // ── 10. NOTE FOLDERS — auto-read ──
+  if (typeof FL !== 'undefined' && FL.length) {
+    c += `\n[NOTE FOLDERS] ${FL.length}: ${FL.join(', ')}`;
+  }
+
+  // ── 11. EXPENSE CATEGORIES — auto-read ──
+  if (typeof EC !== 'undefined' && EC.length) {
+    c += `\n[EXPENSE CATEGORIES] ${EC.length}: ${EC.join(', ')}`;
+  }
+
+  // ═══ LIVE USER DATA ═══
+  c += '\n\n[LIVE DATA]';
+  const tasks = S.entries.filter(e => e.type === 'task' && !e.done);
+  const dTasks = S.entries.filter(e => e.type === 'task' && e.done);
+  const goals = S.entries.filter(e => e.type === 'goal' && !e.done);
+  const notes2 = S.entries.filter(e => e.type === 'note');
+  const ideas = S.entries.filter(e => e.type === 'idea');
+  if (tasks.length) c += `\nPending Tasks (${tasks.length}): ${tasks.slice(0,10).map(x => x.title).join(', ')}`;
+  if (dTasks.length) c += `\nDone Tasks: ${dTasks.length}`;
+  if (goals.length) c += `\nActive Goals (${goals.length}): ${goals.slice(0,5).map(x => x.title).join(', ')}`;
+  if (notes2.length) c += `\nVault Notes: ${notes2.length}`;
+  if (ideas.length) c += `\nIdeas: ${ideas.length}`;
+  if (S.finance.salary) {
+    const sp = S.finance.expenses.reduce((s, e) => s + e.amount, 0);
+    c += `\nSalary:₹${S.finance.salary} | Spent:₹${sp} (${S.finance.expenses.length} expenses) | Left:₹${S.finance.salary - sp}`;
+  }
+  if (S.habits.length) { const dn = S.habitLog[td()] || []; c += `\nHabits: ${dn.length}/${S.habits.length} done today | Names: ${S.habits.map(h=>h.name).join(', ')}`; }
+  if (S.memoryFacts?.length) c += `\nMemory (${S.memoryFacts.length}): ${S.memoryFacts.map(f => f.fact).join(' | ')}`;
+  if (S.customRules?.length) c += `\nCustom Rules (${S.customRules.length}): ${S.customRules.join(' | ')}`;
+  if (S.notes?.length) c += `\nNotes Tab: ${S.notes.length} notes | Folders used: ${[...new Set(S.notes.map(n=>n.folder))].join(', ')}`;
+  if (S.chats?.length) c += `\nSaved Chats: ${S.chats.length}`;
+  if (S.projects?.length) c += `\nProjects: ${S.projects.map(p=>p.name).join(', ')}`;
+  if ((S.reminders||[]).filter(r=>r.active).length) c += `\nActive Reminders: ${S.reminders.filter(r=>r.active).length}`;
+
+  // ═══ SETTINGS STATE ═══
+  c += '\n\n[CURRENT SETTINGS]';
+  c += `\nTheme: ${S.theme || 'clean-white'} | Font: ${S.fontSize || '15px'} | Think Mode: ${S.thinkMode ? 'ON' : 'OFF'}`;
+  if (S.pin) c += ' | PIN: Set';
+
+  // ═══ ACCOUNTABILITY COACH ═══
+  if (S.accountability?.enabled) {
+    c += `\n\n[ACCOUNTABILITY MODE: ${S.accountability.intensity?.toUpperCase() || 'FUNNY'}]`;
+    c += `\nRULES: Check pending tasks, missed habits, financial goals. Nudge the user.`;
+    if (S.accountability.intensity === 'gentle') c += `\nTone: Soft, encouraging. "Bhai kal ka task abhi bhi pending hai, kar le aaj?"`;
+    else if (S.accountability.intensity === 'brutal') c += `\nTone: No excuses, direct. "₹1L ka goal hai, is hafte ₹0 income — serious ho ya sirf sapne dekh rahe ho?"`;
+    else c += `\nTone: Funny roasts + humor. "3 din se gym nahi gaya — trainer ne dara diya kya?"`;
+
+    // Check pending items
+    const pendingTasks = S.entries.filter(e => e.type === 'task' && !e.done);
+    const todayHabits = S.habitLog[td()] || [];
+    const missedHabits = S.habits.filter(h => !todayHabits.includes(h.id));
+    const fGoals = S.finance.financialGoals || [];
+    const behindGoals = fGoals.filter(g => g.target && g.current < g.target * 0.5);
+    if (pendingTasks.length > 3) c += `\nACCOUNT: ${pendingTasks.length} tasks pending — nudge karo!`;
+    if (missedHabits.length) c += `\nACCOUNT: ${missedHabits.length} habits pending today: ${missedHabits.map(h=>h.name).join(', ')}`;
+    if (behindGoals.length) c += `\nACCOUNT: Behind on goals: ${behindGoals.map(g=>g.title).join(', ')}`;
+  }
+
+  // ═══ WEALTH WISDOM ═══
+  c += '\n\n[WEALTH WISDOM — Use these formulas in financial conversations]';
+  c += '\nCompounding: A=P(1+r/n)^(nt) | Rule of 72: 72÷rate=years to double | 50/30/20: Needs/Wants/Invest';
+  c += '\nPay Yourself First | Multiple Streams (7 target) | Assets vs Liabilities | Parkinson\'s Law';
+  if (S.finance.salary) {
+    const s = S.finance.salary;
+    c += `\nUser salary ₹${s}: 50/30/20 = ₹${Math.round(s*.5)} needs, ₹${Math.round(s*.3)} wants, ₹${Math.round(s*.2)} invest`;
+    c += `\nRule of 72: ₹${Math.round(s*.2)}/mo at 12% → double in 6 years`;
+  }
+  // Skills context
+  if ((S.skills||[]).length) {
+    c += `\n\n[SKILLS] ${S.skills.map(sk => `${sk.name}(${sk.level},${sk.monetization}${sk.linkedStream?',→'+sk.linkedStream:''})`).join(' | ')}`;
+  }
+  // Business Ideas context
+  if ((S.businessIdeas||[]).length) {
+    c += `\n[BUSINESS IDEAS] ${S.businessIdeas.map(bi => `${bi.title}(${bi.status},${bi.priority})`).join(' | ')}`;
+  }
+
+  // ═══ TIME ═══
+  c += `\n\n[TIME] ${new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})} | ${new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}`;
+
+  return c;
+}
+
+async function ai(messages, sys, onStream) {
+  if (!S.apiKeys || S.apiKeys.length === 0) {
+    migrateKeys();
+    if (!S.apiKeys?.length) return 'API key add karo Settings mein.';
+  }
+  const opts = { system: sys, think: S.thinkMode };
+  if (typeof onStream === 'function') opts.onStream = onStream;
+  const chatPriority = ['claude', 'openai', 'gemini', 'groq', 'xai', 'openrouter', 'mistral', 'huggingface', 'together'];
+  for (const pid of chatPriority) {
+    const keyObj = (S.apiKeys || []).find(k => k.enabled && k.provider === pid);
+    if (!keyObj) continue;
+    try {
+      let result;
+      switch (pid) {
+        case 'claude': result = await _callClaude(keyObj.key, messages, opts); break;
+        case 'gemini': result = await _callGemini(keyObj.key, messages, opts); break;
+        default:
+          const ep = _getEndpoint(pid);
+          const model = PROVIDER_MAP[pid]?.models?.fast || PROVIDER_MAP[pid]?.models?.chat || 'default';
+          result = await _callOpenAICompat(keyObj.key, ep, model, messages, opts); break;
+      }
+      if (result.ok) return result.text;
+    } catch (e) { console.log(`Provider ${pid} error:`, e); }
+  }
+  return 'Sab API keys fail ho gayi. Internet check karo ya Settings mein keys verify karo.';
+}
+
+function notify(msg) {
+  if ('Notification' in window && Notification.permission === 'granted') new Notification('AAKASH AI', { body: msg, icon: 'icon-192.png' });
+}
